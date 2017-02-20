@@ -13,16 +13,20 @@ class CreateInvoicesTable extends Migration
      */
     public function up()
     {
+        Schema::enableForeignKeyConstraints();
         Schema::create('invoices', function (Blueprint $table) {
             $table->increments('invoice_id');
-            $table->integer('user_id')->index();
-            $table->integer('order_id')->index();
+            $table->integer('user_id')->index()->unsigned();
+            $table->integer('order_id')->index()->unsigned();
             $table->date('due_date');
             $table->date('paid_date');
             $table->decimal('amount', 10, 2);
             $table->char('inv_status', 4);
             $table->timestamps();
+           
         });
+        
+    
     }
 
     /**

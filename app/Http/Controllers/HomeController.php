@@ -23,8 +23,7 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        $data['gravatar_url'] = UserController::get_gravatar( Auth::user()->email, 80, 'mm','g', false, null );
+    {        
         $data['page_title'] = 'Dashboard';
         
         return view('home', $data);

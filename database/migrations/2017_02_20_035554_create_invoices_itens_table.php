@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInvoicesItemsTable extends Migration
+class CreateInvoicesItensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class CreateInvoicesItemsTable extends Migration
      */
     public function up()
     {
+        Schema::enableForeignKeyConstraints();
         Schema::create('invoices_itens', function (Blueprint $table) {
             $table->increments('inv_item_id');
-            $table->integer('invoice_id')->index();
-            $table->integer('order_id')->index();
+            $table->integer('invoice_id')->index()->unsigned();
+            $table->integer('order_id')->index()->unsigned();
             $table->string('item_description', 264);
             $table->decimal('item_total', 10, 2);            
-            $table->timestamps();
+            $table->timestamps();                         
         });
+
     }
 
     /**
@@ -30,6 +32,6 @@ class CreateInvoicesItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invoices_items');
+        Schema::dropIfExists('invoices_itens');
     }
 }

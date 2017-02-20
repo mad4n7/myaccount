@@ -1,4 +1,11 @@
 <?php
+/**
+ * catandmouse.co
+ *
+ * @package  MyAccount
+ * @author   Arthur Silva <arthur@catandmouse.co>
+ */
+
 
 namespace App\Http\Controllers;
 
