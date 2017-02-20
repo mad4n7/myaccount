@@ -26,11 +26,14 @@
             var product_price_month = $(this).attr('data-product-price-month');
             var product_price_year = $(this).attr('data-product-price-year');
             
-            /* $(this).html('<h4>Selected</h4>'); */
             $("#pricing-table-item-" + current_number ).addClass( "highlight" );
             $("#product_id").val( product_id );
             $("#price_month").html( product_price_month );
+            $("#term_length_month").val(product_price_month );
             $("#price_year").html( product_price_year );
+            $("#term_length_year").val(product_price_year );
+            sumItens();
+            
         });  
         
         
@@ -48,14 +51,41 @@
                 }
         });        
         
+        
+
+        
     });    
+    
+    function sumItens(){
+        var total = 0;    
+        
+        var selected_price = $( "input[type=radio][name=term_length]:checked" ).val();
+        
+        
+        if ( $('input[name="ckb_add_migrate"]').is(':checked') ) {
+            var item_total = $('input[name="ckb_add_migrate"]').val();
+            total += parseFloat(item_total);        
+        } 
+        if ( $('input[name="ckb_add_ssl"]').is(':checked') ) {
+            var item_total = $('input[name="ckb_add_ssl"]').val();
+            total += parseFloat(item_total); 
+        }                 
+        
+        total += parseFloat(selected_price);        
+        console.log(total);
+
+        $("#price_total").html( total );
+        
+         
+    }
+    
 </script>
 @endsection
 
 @section('content')
 
 <div class="col-sm-16 col-xs-12">
-<form class="form form-horizontal" id="frmSend">
+    <form class="form form-horizontal" id="frmSend" method="POST" action="{{ url('orders') }}">
     {{ csrf_field() }}
     <input type="hidden" name="product_id" id="product_id" value="" />    
     
@@ -168,17 +198,19 @@
       <div class="section-body">
 
         <div class="radio">
-            <input type="radio" name="radio2" id="radio3" value="option1">
-            <label for="radio3" class="lead">
+            <input type="radio" name="term_length" id="term_length_month" value="0" onchange="sumItens()" >
+            <label for="term_length_month" class="lead">
                 &nbsp; 1 month - $ <span id="price_month"></span>
             </label>
+            
         </div>
         <div class="radio">
-            <input type="radio" name="radio2" id="radio4" value="option2" checked>
-            <label for="radio4" class="lead">
+            <input type="radio" name="term_length" id="term_length_year" value="0"  onchange="sumItens()" checked>
+            <label for="term_length_year" class="lead">
                 &nbsp; 12 months - $ <span id="price_year"></span> <span class="small text-danger">( Save 14% )</span>
-            </label>
+            </label>            
         </div>
+          <div id="price_selected" class="price_itens"></div>
 
 
       </div>
@@ -209,16 +241,44 @@
               <div class="col-md-9">           
                   
                 <div class="checkbox">
-                    <input type="checkbox" id="ckb_migrate" name="ckb_migrate">
-                    <label for="ckb_migrate">
+                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="140" onchange="sumItens()">
+                    <label for="ckb_add_migrate">
                         &nbsp; Migrate my website ( $ 140 up to 3 websites )
                     </label>
                 </div>
+                  
+                <div class="checkbox">
+                    <input type="checkbox" id="ckb_add_ssl" name="ckb_add_ssl" value="24"  onchange="sumItens()">
+                    <label for="ckb_add_ssl">
+                        &nbsp; SSL Certificate ( $ 24 / year )
+                    </label>
+                </div>                  
                 
               </div>                           
             </div>              
           </div>
         </div>
+            
+
+        <!-- total -->
+        <div class="section">
+          <div class="section-title">Amount</div>
+          <div class="section-body">
+
+           <div class="form-group">
+              <label class="col-md-3 control-label">Total</label>
+              <div class="col-md-6">
+                  <div class="lead text-success"><strong>$ <span id="price_total"></span></strong></div>
+                <div id="domain_name_validate"></div>
+              </div>
+            </div>
+                         
+                
+              </div>                           
+            </div>              
+          </div>
+        </div>        
+        <!-- end total -->
             
           
             <div class="form-footer">
