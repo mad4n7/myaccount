@@ -1,11 +1,67 @@
 @extends('layouts.dashboard')
 
+@section('header_tags')
+<script src="{{ asset('js/plugins/jquery.validate.min.js') }}"></script>
+
+
+<script>
+    $(function() {
+        $("#term-length").hide();
+        
+        /* select the product */
+        $( ".btn_product" ).click(function() {
+            $("#term-length").show();
+            
+            <?php
+            $i = 0;
+            foreach($products as $product){
+                echo '$("#pricing-table-item-'.$i.'" ).removeClass( "highlight" );';
+                $i++;
+            }
+            ?>
+            
+            
+            var current_number = $(this).attr('data-product-order');
+            var product_id = $(this).attr('data-product-id');
+            var product_price_month = $(this).attr('data-product-price-month');
+            var product_price_year = $(this).attr('data-product-price-year');
+            
+            /* $(this).html('<h4>Selected</h4>'); */
+            $("#pricing-table-item-" + current_number ).addClass( "highlight" );
+            $("#product_id").val( product_id );
+            $("#price_month").html( product_price_month );
+            $("#price_year").html( product_price_year );
+        });  
+        
+        
+        /* Form validation */
+        $("#frmSend").validate({
+                rules: {
+                        domain_name: "required",
+                },
+                messages: {
+                        domain_name: "Please, type the website address(domain name)"
+                },
+                errorPlacement: function (error, element) {
+                    var name = $(element).attr("name");
+                    error.appendTo($("#" + name + "_validate"));
+                }
+        });        
+        
+    });    
+</script>
+@endsection
+
 @section('content')
 
 <div class="col-sm-16 col-xs-12">
+<form class="form form-horizontal" id="frmSend">
+    {{ csrf_field() }}
+    <input type="hidden" name="product_id" id="product_id" value="" />    
+    
     <div class="card">
         <div class="card-header">
-          Order
+          Steps
         </div>
         <div class="card-body">
           <!-- content -->
@@ -45,16 +101,13 @@
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="step1">
-                        <b>Step1</b> : Select your plan.
+                        <b>Step1</b> : Confirm your product and data.
                     </div>
                     <div role="tabpanel" class="tab-pane" id="step2">
-                        <b>Step2</b> : Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore
+                        <b>Step2</b> : Pay our invoice.
                     </div>
                     <div role="tabpanel" class="tab-pane" id="step3">
-                        <b>Step3</b> : Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="step4">
-                        <b>Step4</b> : Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequa
+                        <b>Step3</b> : Just wait, we will activate your account.
                     </div>
                 </div>
             </div>
@@ -62,50 +115,132 @@
             </div>    
           
           <!-- pricing table -->
-        <div class="row">
-            <div class="col-xs-12">
-              <div class="card">
-          <div class="card-body no-padding">
+    <div class="row">
+        <div class="col-xs-12">
+          <div class="card">
+            <div class="card-header">
+              Hosting Plans
+            </div>                  
+        <div class="card-body no-padding">
             <div class="row no-gap">
-             
-            <?php foreach ($products as $product) { ?>
                 
+            <?php
+            $i = 0;
+            foreach ($products as $product) { 
+                ?>
+
               <div class="col-md-3 col-sm-6">
-                <div class="pricing-table no-border-left">
+                <div id="pricing-table-item-{{ $i }}" class="pricing-table no-border-left">
                   <div class="pricing-heading">
                     <div class="title">{{ $product->prod_name }}</div>
                     <div class="price">
                       <div class="title">{{ $product->price_month }}<span class="sign">$</span></div>
                       <div class="subtitle">per month</div>
                     </div>
-                    
+
                   </div>
                   <div class="pricing-body">
                     <ul class="description">                      
-                      <li><i class="icon ion-person-stalker"></i> <?php echo $product->prod_description; ?><span class="small">Users</span></li>
-                      <li><i class="icon ion-ios-chatboxes-outline"></i> or $ {{ $product->price_year }} <span class="small">/ year</span></li>
+                      <li><i class="icon ion-person-stalker"></i> <?php echo $product->prod_description; ?> <span class="small">Users</span></li>
+                      <!-- <li><i class="icon ion-ios-chatboxes-outline"></i> or $ {{ $product->price_year }} <span class="small">/ year</span></li> -->
                     </ul>
                   </div>
                   <div class="pricing-footer">
-                      <a class="btn btn-default btn-success" href="#">Select</a>
+                      <button type="button" class="btn btn-default btn-success btn_product" 
+                              data-product-order="{{ $i }}" 
+                              data-product-id="{{ $product->product_id }}"
+                              data-product-price-month="{{ $product->price_month }}"
+                              data-product-price-year="{{ $product->price_year }}">Select</button>
                   </div>
                 </div>
               </div>
-            <?php } ?>  
+            <?php $i++; } ?>  
                 
             </div>
           </div>
+            </div>
         </div>
+    </div>
+    <!-- end  pricing table -->
+    <br />
+    <div id="term-length" class="section">
+      <div class="section-title">Select term length</div>
+      <div class="section-body">
+
+        <div class="radio">
+            <input type="radio" name="radio2" id="radio3" value="option1">
+            <label for="radio3" class="lead">
+                &nbsp; 1 month - $ <span id="price_month"></span>
+            </label>
         </div>
+        <div class="radio">
+            <input type="radio" name="radio2" id="radio4" value="option2" checked>
+            <label for="radio4" class="lead">
+                &nbsp; 12 months - $ <span id="price_year"></span> <span class="small text-danger">( Save 14% )</span>
+            </label>
         </div>
-          <!-- end  pricing table -->
+
+
+      </div>
+    </div>            
           
+          
+    <div class="row">
+        <div class="col-xs-12">
+          <div class="card">
+                  
+        <div class="card-body">
+        
+            
+        <div class="section">
+          <div class="section-title">Domain name</div>
+          <div class="section-body">
+
+           <div class="form-group">
+              <label class="col-md-3 control-label">Domain name</label>
+              <div class="col-md-6">
+                <input type="text" id="domain_name" name="domain_name" class="form-control" placeholder="">
+                <div id="domain_name_validate"></div>
+              </div>
+            </div>
+              
+           <div class="form-group">
+              <label class="col-md-3 control-label">Additional services</label>
+              <div class="col-md-9">           
+                  
+                <div class="checkbox">
+                    <input type="checkbox" id="ckb_migrate" name="ckb_migrate">
+                    <label for="ckb_migrate">
+                        &nbsp; Migrate my website ( $ 140 up to 3 websites )
+                    </label>
+                </div>
+                
+              </div>                           
+            </div>              
+          </div>
+        </div>
+            
+          
+            <div class="form-footer">
+                <div class="form-group">
+                  <div class="col-md-2 pull-right">
+                    <button type="submit" class="btn btn-primary btn-lg">Continue</button>
+                  </div>
+                </div>
+            </div>
+        
+            
+          </div>
+            </div>
+        </div>
+    </div>          
           
           <!-- end content -->
             
             
         </div>
     </div>
+</form>
 </div>
 
 

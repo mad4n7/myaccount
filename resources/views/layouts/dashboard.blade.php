@@ -12,13 +12,15 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/flat-admin.css') }}">
 
+    <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/app.js') }}"></script>    
     <!-- jQuery -->
-    <script src="{{ asset('js/plugins/jquery.min.js') }}"></script>    
-    
+    <script src="{{ asset('js/plugins/jquery.min.js') }}"></script>            
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/red.css') }}">
     <!-- Theme 
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue-sky.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/red.css') }}">
+    
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/yellow.css') }}">
     -->
 
@@ -32,7 +34,14 @@
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
         ]) !!};
+    
+        $(function() {
+            /* select theme */
+            $(".app").removeClass("app-blue-sky").removeClass("app-yellow").removeClass("app-red").removeClass("app-green").removeClass("app-default").addClass("app-green");    
+        });    
+
     </script>
+    @yield('header_tags')
 </head>
 <body>
   <div class="app app-default">
@@ -159,11 +168,7 @@
         <li class="logo">
           <a class="navbar-brand" href="#"><img src="{{ asset('images/logo_small.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
         </li>
-        <li>
-          <button type="button" class="navbar-toggle">
-            <img class="profile-img" src="./assets/images/profile.png">
-          </button>
-        </li>
+        
       </ul>
       <ul class="nav navbar-nav navbar-left">
         <li class="navbar-title">Dashboard</li>
@@ -312,7 +317,7 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="footer-copyright">
-        Copyright © 2017 Cat & Mouse.co
+        Copyright © 2017 Cat & Mouse
       </div>
     </div>
   </div>
@@ -321,8 +326,7 @@
 
   </div>
   
-  <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('assets/js/app.js') }}"></script>
+
 
 </body>
 </html>
