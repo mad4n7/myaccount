@@ -18,7 +18,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
-Route::get('/home', 'HomeController@index');
+
+
+Route::get('invoice/status', 'InvoiceController@getPayPalPaymentStatus');
+Route::get('invoice/cancel', 'InvoiceController@showPaymentCancel');
 
 
 Route::group(['middleware' => 'auth'], function()

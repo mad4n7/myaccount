@@ -8,11 +8,7 @@ class Invoices_item extends Model
 {
     protected $table = 'invoices_itens';
     protected $primaryKey = 'inv_item_id';
-    
-    public function getTable()
-    {
-        return $this->table;
-    }    
+      
     
   public function invoice()
   {
@@ -22,7 +18,7 @@ class Invoices_item extends Model
 static function countItemsByInvoiceID($invoice_id)
 {
      // check new amount
-     $total = DB::table(getTable())
+     $total = DB::table('invoices_itens')
              ->where('payment_id', '=', $invoice_id)
              ->count();
 

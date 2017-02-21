@@ -17,7 +17,7 @@ class Order extends Model
     
     public static function checkClientOwner($id, $user_id)
     {
-          $result = DB::table(getTable())
+          $result = DB::table('orders')
                               ->where('order_id', '=', $id)
                               ->where('user_id', '=', $user_id)                                
                               ->count();

@@ -42,9 +42,11 @@
         $("#frmSend").validate({
                 rules: {
                         domain_name: "required",
+                        terms_conditions: "required"
                 },
                 messages: {
-                        domain_name: "Please, type the website address(domain name)"
+                        domain_name: "Please, type the website address(domain name)",
+                        terms_conditions: "In order to continue you must agree to Cat&Mouse's Terms and Conditions."
                 },
                 errorPlacement: function (error, element) {
                     var name = $(element).attr("name");
@@ -274,7 +276,7 @@
               <label class="col-md-3 control-label">Total</label>
               <div class="col-md-6">
                   <div class="lead text-success"><strong>$ <span id="price_total"></span></strong></div>
-                <div id="domain_name_validate"></div>
+                <div class="text-danger" id="domain_name_validate"></div>
               </div>
             </div>
                          
@@ -284,7 +286,28 @@
           </div>
         </div>        
         <!-- end total -->
-            
+        <div class="section">
+          <br />
+          <div class="section-body">
+
+              
+           <div class="form-group">
+              <label class="col-md-3 control-label">Do you agree with our Terms and Conditions?</label>
+              <div class="col-md-9">           
+               
+                <div class="checkbox">
+                    <input type="checkbox" id="terms_conditions" name="terms_conditions">
+                    <label for="terms_conditions">
+                        &nbsp; Yes, I agree with the Cat&Mouse <a href="#">Terms and Conditions</a>.
+                    </label>
+                    <br />
+                    <div class="text-danger" id="terms_conditions_validate"></div>
+                </div>                  
+                
+              </div>                           
+            </div>              
+          </div>
+        </div>            
           
             <div class="form-footer">
                 <div class="form-group">

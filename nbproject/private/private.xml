@@ -3,12 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Applications/MAMP/htdocs/myaccount/composer.json</file>
-            <file>file:/Applications/MAMP/htdocs/myaccount/resources/views/layouts/dashboard.blade.php</file>
+            <file>file:/Applications/MAMP/htdocs/myaccount/storage/paypal.log</file>
+            <file>file:/Applications/MAMP/htdocs/myaccount/resources/views/orders/payment.blade.php</file>
+            <file>file:/Applications/MAMP/htdocs/myaccount/app/Http/Controllers/InvoiceController.php</file>
             <file>file:/Applications/MAMP/htdocs/myaccount/resources/views/orders/add.blade.php</file>
             <file>file:/Applications/MAMP/htdocs/myaccount/routes/web.php</file>
-            <file>file:/Applications/MAMP/htdocs/myaccount/app/Http/Controllers/OrderController.php</file>
-            <file>file:/Applications/MAMP/htdocs/myaccount/resources/views/home.blade.php</file>
+            <file>file:/Applications/MAMP/htdocs/myaccount/.env</file>
         </group>
     </open-files>
 </project-private>

@@ -3,17 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Invoice extends Model
 {
     
 protected $table = 'invoices';
 protected $primaryKey = 'invoice_id';
-    
-public function getTable()
-{
-    return $this->table;
-}        
 
   public function invoice_itens()
   {
@@ -28,7 +24,7 @@ public function getTable()
    */
   public static function checkClientOwner($id, $user_id)
   {
-        $result = DB::table(getTable())
+        $result = DB::table('invoices')
                             ->where('invoice_id', '=', $id)
                             ->where('user_id', '=', $user_id)                                
                             ->count();

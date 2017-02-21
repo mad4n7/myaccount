@@ -278,11 +278,11 @@
     <?php
 
 
-    if( Session::get('msg_error') !== null){
+    if( session('msg_error') !== null){
         $msg_error = Session::get('msg_error');
     }
-    elseif(Session::get('msg') !== null){
-        $msg = Session::get('msg');
+    elseif(session('msg') !== null){
+        $msg = session('msg');
     } 
 
     if(!empty($msg) ) {
