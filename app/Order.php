@@ -10,6 +10,10 @@ class Order extends Model
     protected $table = 'orders';
     protected $primaryKey = 'order_id';
 
+    public function user()
+    {
+      return $this->belongsTo('App\User');    
+    }     
     public function getTable()
     {
         return $this->table;
@@ -17,7 +21,7 @@ class Order extends Model
     
     public static function checkClientOwner($id, $user_id)
     {
-          $result = DB::table('orders')
+          $result = DB::table($this->_table)
                               ->where('order_id', '=', $id)
                               ->where('user_id', '=', $user_id)                                
                               ->count();

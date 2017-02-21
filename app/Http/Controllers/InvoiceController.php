@@ -192,6 +192,7 @@ class InvoiceController extends Controller
 
                 $data['message'] = 'Payment failed, nothing was posted.';
                 $data['page_title'] = 'Payment Status';
+                $data['approved'] = 0;
                 return view('invoices/status', $data);
 
                 /* return Redirect::route('api/payment/status/show')
@@ -235,8 +236,10 @@ class InvoiceController extends Controller
                 /* END Send e-mail to managers */
                 $data['message'] = 'We received your payment with success. Our team will contact you soon.';
                 $data['page_title'] = 'Payment Status';
+                $data['approved'] = 1;
                 return view('invoices/status', $data);
             }
+                $data['approved'] = 0;
                 $data['message'] = 'Payment failed';
                 $data['page_title'] = 'Payment Status';
                 return view('invoices/status', $data);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\User_detail;
+
 class HomeController extends Controller
 {
     /**
@@ -24,6 +26,8 @@ class HomeController extends Controller
      */
     public function index()
     {        
+        $data['tmp_user_details'] = User_detail::where('user_id', Auth::user()->id)->first();
+          
         $data['page_title'] = 'Dashboard';
         
         return view('home', $data);

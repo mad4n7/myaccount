@@ -77,7 +77,37 @@
                 </div>
             </div>
         </nav>
+    <?php
 
+    if( Session::get('msg_error') !== null){
+        $msg_error = Session::get('msg_error');
+    }
+    elseif(Session::get('msg') !== null){
+        $msg = Session::get('msg');
+    } 
+
+    if(!empty($msg) ) {
+        $msg_modal = $msg;    
+
+        echo '<div class="col-xs-1">&nbsp;</div>';
+        echo '<div class="alert alert-success alert-dismissable"  role="alert">';
+        echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
+        echo '<span class="sr-only">Close</span></button>';
+        echo $msg_modal;
+        echo '</div><div class="col-xs-1">&nbsp;</div>';
+
+    }
+    elseif(!empty($msg_error)) {
+        $msg_modal = $msg_error;
+        echo '<div class="col-xs-1">&nbsp;</div>';
+        echo '<div class="alert alert-danger alert-dismissable"  role="alert">';
+        echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
+        echo '<span class="sr-only">Close</span></button>';
+        echo $msg_modal;
+        echo '</div><div class="col-xs-1">&nbsp;</div>';
+    }    
+    ?>  
+        
         @yield('content')
     </div>
 

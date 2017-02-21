@@ -11,7 +11,7 @@ class Invoice extends Model
 protected $table = 'invoices';
 protected $primaryKey = 'invoice_id';
 
-  public function invoice_itens()
+  public function invoice_item()
   {
       return $this->hasMany('App\Invoices_item', 'invoice_id');
   }     
@@ -24,7 +24,7 @@ protected $primaryKey = 'invoice_id';
    */
   public static function checkClientOwner($id, $user_id)
   {
-        $result = DB::table('invoices')
+        $result = DB::table($this->_table)
                             ->where('invoice_id', '=', $id)
                             ->where('user_id', '=', $user_id)                                
                             ->count();

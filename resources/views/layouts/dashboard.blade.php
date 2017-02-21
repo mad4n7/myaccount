@@ -56,7 +56,7 @@
   <div class="sidebar-menu">
     <ul class="sidebar-nav">
       <li class="active">
-        <a href="{{ url('/') }} ">
+        <a href="{{ url('/home') }} ">
           <div class="icon">
             <i class="fa fa-tasks" aria-hidden="true"></i>
           </div>
@@ -146,14 +146,7 @@
   </div>
 </aside>
 
-<script type="text/ng-template" id="sidebar-dropdown.tpl.html">
-  <div class="dropdown-background">
-    <div class="bg"></div>
-  </div>
-  <div class="dropdown-container">
-    
-  </div>
-</script>
+
 <div class="app-container">
 
   <nav class="navbar navbar-default" id="navbar">
@@ -277,34 +270,51 @@
 
     <?php
 
-
-    if( session('msg_error') !== null){
+    if( Session::get('msg_error') !== null){
         $msg_error = Session::get('msg_error');
     }
-    elseif(session('msg') !== null){
-        $msg = session('msg');
+    elseif(Session::get('msg') !== null){
+        $msg = Session::get('msg');
     } 
 
     if(!empty($msg) ) {
         $msg_modal = $msg;    
-
+        echo '<div class="row">';
         echo '<div class="col-xs-1">&nbsp;</div>';
         echo '<div class="alert alert-success alert-dismissable"  role="alert">';
         echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
         echo '<span class="sr-only">Close</span></button>';
         echo $msg_modal;
         echo '</div><div class="col-xs-1">&nbsp;</div>';
+        echo '</div>';
 
     }
     elseif(!empty($msg_error)) {
         $msg_modal = $msg_error;
+        echo '<div class="row">';
         echo '<div class="col-xs-1">&nbsp;</div>';
         echo '<div class="alert alert-danger alert-dismissable"  role="alert">';
         echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
         echo '<span class="sr-only">Close</span></button>';
         echo $msg_modal;
         echo '</div><div class="col-xs-1">&nbsp;</div>';
-    }    
+        echo '</div>';
+    }   
+    else {
+        //check e-mail confirmation
+        $tmp_user_details = \App\User_detail::where('user_id', Auth::user()->id)->first();
+        if($tmp_user_details->activated != 1) {        
+            echo '<div class="row">';
+            echo '<div class="col-xs-1">&nbsp;</div>';
+            echo '<div class="alert alert-danger alert-dismissable"  role="alert">';
+            echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
+            echo '<span class="sr-only">Close</span></button>';
+            echo 'We could not confirm your e-mail address.Please, check your e-mail to confirm your account.';
+            echo '<br /> <a href="'.url('safe/token/resend').'">Click here to resend the confirmation code e-mail.</a>';
+            echo '</div><div class="col-xs-1">&nbsp;</div>';
+            echo '</div>';
+        }     
+    }
     ?>    
     
 <div class="row">

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\User_detail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -62,10 +64,34 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+        
+        //create user details
+        $generated_token = md5( date('mdYhis').'user_email'.$user->email );
+        $user_detail = new User_detail;
+        $user_detail->user_id = $user->id;
+        $user_detail->activation_token = $generated_token;
+        $user_detail->activated = 0;
+        $user_detail->save();
+        
+        //send e-mail
+        $data_email = [                    
+            "user" => $user,
+            "email" => $user->email,
+            "name" => $user->name,
+            "token" => $generated_token
+        ];
+
+        Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
+        {
+            $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
+        });         
+        
+        
+        return $user;
     }
 }

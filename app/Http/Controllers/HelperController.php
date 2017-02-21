@@ -3,10 +3,73 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+
+use App\User;
+use App\User_detail;
+
 
 class HelperController extends Controller
 {
 
+    
+      
+    public function confirmToken($token)
+    {
+        try {
+            $user_detail_db = User_detail::where('activation_token', $token)
+                    ->update(['activated' => 1]);
+            if($user_detail_db == 0 || is_null($user_detail_db) || empty($user_detail_db) ){
+                Session::flash('msg_error', 'Sorry, we can not find your confirmation code.<br /> Please try again.');
+                return redirect('/login');                
+            }
+            
+            $user_detail = User_detail::where('activation_token', $token)->first();                    
+            //login the user
+            Auth::loginUsingId($user_detail->user_id, true);            
+            Session::flash('msg', 'Your e-mail has been confirmed. Thank you!');
+            return redirect('/home');            
+                
+        } catch (Exception $ex) {
+            Session::flash('msg_error', 'Sorry, we got an unexpected error. Please, try again.'.var_dump($ex));
+            return redirect('/login');
+        }
+
+    } 
+
+    public function tokenResend()
+    {
+        $test = 0;
+        try {
+            $user = User::find(Auth::user()->id);
+            $user_detail = User_detail::where('user_id', Auth::user()->id)->first();             
+            
+            //send e-mail
+            $data_email = [                    
+                "user" => $user,
+                "email" => $user->email,
+                "name" => $user->name,
+                "token" => $user_detail->activation_token
+            ];
+
+            Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
+            {
+                $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
+            });  
+            
+            Session::flash('msg', 'A new e-mail with your confirmation code has been sent.');
+            return redirect('/home');            
+                
+        } catch (Exception $ex) {
+            Session::flash('msg_error', 'Sorry, we got an unexpected error. Please, try again.'.var_dump($ex));
+            return redirect('/login');
+        }
+
+    }        
+    
+    
         /**
          * Convert MM/DD/YYYY to YYYY-MM-DD
          * @param type $date
