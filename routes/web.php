@@ -18,6 +18,12 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+Route::get('/home', 'HomeController@index');
 
 
-Route::resource('orders', 'OrderController');
+Route::group(['middleware' => 'auth'], function()
+{
+    Route::resource('orders', 'OrderController');
+    
+    Route::get('invoice/paypal/checkout/{id}', 'InvoiceController@clientShowPayPalCheckout');   
+});

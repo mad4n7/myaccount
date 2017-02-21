@@ -28,6 +28,7 @@
             
             $("#pricing-table-item-" + current_number ).addClass( "highlight" );
             $("#product_id").val( product_id );
+            
             $("#price_month").html( product_price_month );
             $("#term_length_month").val(product_price_month );
             $("#price_year").html( product_price_year );
@@ -59,9 +60,12 @@
     function sumItens(){
         var total = 0;    
         
-        var selected_price = $( "input[type=radio][name=term_length]:checked" ).val();
-        
-        
+        var order = $( "input[type=radio][name=term_length]:checked" );
+        var selected_price = order.val();
+        var selected_period = order.attr('data-period');
+        //console.log("Period:" + selected_period);
+        $("#product_periodicity").val( selected_period );
+                
         if ( $('input[name="ckb_add_migrate"]').is(':checked') ) {
             var item_total = $('input[name="ckb_add_migrate"]').val();
             total += parseFloat(item_total);        
@@ -88,6 +92,7 @@
     <form class="form form-horizontal" id="frmSend" method="POST" action="{{ url('orders') }}">
     {{ csrf_field() }}
     <input type="hidden" name="product_id" id="product_id" value="" />    
+    <input type="hidden" name="product_periodicity" id="product_periodicity" value="" />    
     
     <div class="card">
         <div class="card-header">
@@ -198,14 +203,14 @@
       <div class="section-body">
 
         <div class="radio">
-            <input type="radio" name="term_length" id="term_length_month" value="0" onchange="sumItens()" >
+            <input type="radio" name="term_length" id="term_length_month" data-period="month" value="0" onchange="sumItens()" >
             <label for="term_length_month" class="lead">
                 &nbsp; 1 month - $ <span id="price_month"></span>
             </label>
             
         </div>
         <div class="radio">
-            <input type="radio" name="term_length" id="term_length_year" value="0"  onchange="sumItens()" checked>
+            <input type="radio" name="term_length" id="term_length_year"  data-period="year" value="0"  onchange="sumItens()" checked>
             <label for="term_length_year" class="lead">
                 &nbsp; 12 months - $ <span id="price_year"></span> <span class="small text-danger">( Save 14% )</span>
             </label>            
