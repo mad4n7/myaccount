@@ -98,7 +98,7 @@
     
     <div class="card">
         <div class="card-header">
-          Steps
+          Order a product
         </div>
         <div class="card-body">
           <!-- content -->
@@ -178,7 +178,7 @@
                   </div>
                   <div class="pricing-body">
                     <ul class="description">                      
-                      <li><i class="icon ion-person-stalker"></i> <?php echo $product->prod_description; ?> <span class="small">Users</span></li>
+                      <li><i class="icon ion-person-stalker"></i> <?php echo $product->prod_description; ?> </li>
                       <!-- <li><i class="icon ion-ios-chatboxes-outline"></i> or $ {{ $product->price_year }} <span class="small">/ year</span></li> -->
                     </ul>
                   </div>
@@ -323,13 +323,10 @@
         </div>
     </div>          
           
-          <!-- end content -->
-            
-            
-        </div>
-    </div>
-</form>
+          <!-- end content -->            
+    </form>
 </div>
+
 
 
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use DateTime;
 
 use App\User;
 use App\User_detail;
@@ -41,7 +42,6 @@ class HelperController extends Controller
 
     public function tokenResend()
     {
-        $test = 0;
         try {
             $user = User::find(Auth::user()->id);
             $user_detail = User_detail::where('user_id', Auth::user()->id)->first();             
@@ -109,6 +109,26 @@ class HelperController extends Controller
             }
         }
 
+        /**
+         * Convert YYYY-MM-DD 00:00:00 to MM/DD/YYYY
+         * @param type $date
+         * @return string
+         */        
+        static function funcDateTimeMysqlToUSA($date)
+        {
+
+            if($date == "" || $date == '0.00' || $date === null)
+            {
+                return null;
+            }
+            else {
+                
+                $date = new DateTime($date);
+                return $date->format('m/d/Y');                
+       
+            }
+        }        
+        
 
 
         /**
@@ -220,9 +240,9 @@ class HelperController extends Controller
 
         static function returnPymtStatusByChar($chars)
         {
-            if($chars == 'p') { return 'paid'; }
-            elseif($chars == 'i') { return 'incomplete'; }
-            else { return 'unpaid'; }
+            if($chars == 'p') { return '<span class="label label-success">paid</span>'; }
+            elseif($chars == 'i') { return '<span class="label label-warning">incomplete</span>'; }
+            else { return '<span class="label label-danger">unpaid</span>'; }
 
         }
 
@@ -233,4 +253,6 @@ class HelperController extends Controller
 
           }        
         
+          
+          
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\User_detail;
+use App\Product;
 
 class HomeController extends Controller
 {
@@ -29,7 +30,8 @@ class HomeController extends Controller
         $data['tmp_user_details'] = User_detail::where('user_id', Auth::user()->id)->first();
           
         $data['page_title'] = 'Dashboard';
-        
-        return view('home', $data);
+        $data['products'] = Product::all();    
+        //return view('home', $data);
+        return view('orders.add', $data);
     }
 }

@@ -222,6 +222,13 @@ class InvoiceController extends Controller
                 $tmp_pmt->save();
                 /* END change Paypal status */
 
+                
+                /*
+                 * 
+                 *  TODO: cPanel integration here 
+                 * 
+                 */                
+                
                 //send e-mail
                 $data_email = [                    
                     "invoice_id" => $tmp_pmt->invoice_id
@@ -231,7 +238,9 @@ class InvoiceController extends Controller
                 {
                     $message->to('arthur@catandmouse.co', 'Arthur')->subject('New Payment Confirmed');
                     $message->to('elle@catandmouse.co', 'Elle')->subject('New Payment Confirmed');
-                });                 
+                });
+                
+
                  
                 /* END Send e-mail to managers */
                 $data['message'] = 'We received your payment with success. Our team will contact you soon.';

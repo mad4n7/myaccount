@@ -27,9 +27,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $data['page_title'] = 'Pricing';
-        //return view('orders.add', $data);
-        return 'Orders list here...';
+        $data['orders'] = Order::getAllByUserId(Auth::user()->id);
+        $data['page_title'] = 'Orders';        
+        return view('orders.list', $data);
     }
 
     /**
@@ -145,7 +145,7 @@ class OrderController extends Controller
         $data['invoice'] = Invoice::where('order_id', $id)->first();
         
         $data['page_title'] = 'Payment';
-        return view('orders.payment', $data); 
+        return view('orders.view', $data); 
     }
 
     /**

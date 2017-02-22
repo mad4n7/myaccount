@@ -24,7 +24,7 @@ protected $primaryKey = 'invoice_id';
    */
   public static function checkClientOwner($id, $user_id)
   {
-        $result = DB::table($this->_table)
+        $result = DB::table('invoices')
                             ->where('invoice_id', '=', $id)
                             ->where('user_id', '=', $user_id)                                
                             ->count();

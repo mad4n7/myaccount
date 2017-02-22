@@ -23,11 +23,12 @@
     
     <div class="card">
         <div class="card-header">
-          Payment
+            <p class="lead visible-print-inline">RECEIPT: Cat & Mouse <br /></p>
+            <p class="hidden-print">Order ID: &nbsp; <strong>{{ $invoice->order_id }}</strong></p>
         </div>
         <div class="card-body">
           <!-- content -->
-            <div class="section">                        
+        <div class="section hidden-print">                        
                         <div class="section-body">
                           <div class="step">
                 <ul class="nav nav-tabs nav-justified" role="tablist">
@@ -40,7 +41,7 @@
                             </div>
                         </a>
                     </li>                    
-                    <li role="step" class="active">
+                    <li role="step" <?php if($invoice->inv_status != 'p') { ?> class="active" <?php } ?> >
                         <a href="#step2" role="tab" id="step2-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-credit-card"></div>
                             <div class="heading">
@@ -50,7 +51,7 @@
                         </a>
                     </li>
 
-                    <li role="step">
+                    <li role="step" <?php if($invoice->inv_status == 'p') { ?> class="active" <?php } ?> >
                         <a href="#step3" role="tab" id="step3-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-server "></div>
                             <div class="heading">
@@ -60,21 +61,16 @@
                         </a>
                     </li>
                 </ul>
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane" id="step1">
-                        <b>Step1</b> : Confirm your product and data.
-                    </div>
-                    <div role="tabpanel" class="tab-pane active" id="step2">
-                        <b>Step2</b> : Pay our invoice.
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="step3">
-                        <b>Step3</b> : Just wait, we will activate your account.
-                    </div>
-                </div>
+    
             </div>
             </div>
-            </div>          
+        </div> 
+    <?php if($invoice->inv_status == 'p') { ?>
+          <div>              
+          <p class="lead">Invoice number: {{ $invoice->invoice_id }}</p>
+          <p class="lead">Paid on: <?php echo App\Http\Controllers\HelperController::funcDateMysqlToUSA($invoice->paid_date); ?></p>
+          </div>
+    <?php } ?>          
           
     <div class="row">
         <div class="col-xs-12">
@@ -84,7 +80,7 @@
         
             
         <div class="section">
-          <div class="section-title">Ordered Itens</div>
+          <div class="section-title">Itens</div>
           <div class="section-body">
     
            <div class="form-group">              
@@ -110,10 +106,9 @@
           <div class="section-body">
 
            <div class="form-group">
-              <label class="col-md-3 control-label">Total</label>
-              <div class="col-md-6">
-                  <div class="lead text-success"><strong><?php echo \App\Http\Controllers\HelperController::funcConvertDecimalToCurrency($invoice->amount); ?> <span id="price_total"></span></strong></div>
-                <div id="domain_name_validate"></div>
+              <label class="col-md-3 col-xs-3 control-label">Total</label>
+              <div class="col-md-6 col-xs-8">
+                  <div class="lead text-success"><strong><?php echo \App\Http\Controllers\HelperController::funcConvertDecimalToCurrency($invoice->amount); ?> <span id="price_total"></span></strong></div>                
               </div>
             </div>
                          
@@ -124,7 +119,7 @@
               
         </div>        
             
-            
+        <?php if($invoice->inv_status != 'p') { ?>
         <div class="section">
           <div class="section-title">Select a Payment Type</div>
           <div class="section-body">
@@ -141,7 +136,7 @@
             
           </div>
         </div>            
-            
+        <?php } ?>  
         <!-- end total -->
             
           
