@@ -30,11 +30,11 @@ class User extends Authenticatable
     
     public function details()
     {
-        return $this->hasOne('App\User_details', 'user_id');
+        return $this->hasOne('App\User_detail', 'user_id');
     }    
     
     public function orders()
     {
-        return $this->hasMany('App\User_details', 'user_id');
+        return $this->hasMany('App\User_detail', 'user_id');
     }     
 }

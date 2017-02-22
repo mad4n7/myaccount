@@ -30,5 +30,10 @@ Route::group(['middleware' => 'auth'], function()
 {
     Route::resource('orders', 'OrderController');
     
+    Route::get('/profile', 'UserController@showProfile');   
+    Route::post('/profile', 'UserController@updateProfile'); 
+    Route::post('/profile/password', 'UserController@updateProfilePassword'); 
+    
+    
     Route::get('invoice/paypal/checkout/{id}', 'InvoiceController@clientShowPayPalCheckout');   
 });

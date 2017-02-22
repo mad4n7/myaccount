@@ -11,8 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/flat-admin.css') }}">
-
-    <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>
+    
 
     <!-- jQuery -->
     <script src="{{ asset('js/plugins/jquery.min.js') }}"></script>            
@@ -340,7 +339,7 @@
 
   </div>
   
-
+<script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>
 
 </body>
 </html>

@@ -12,10 +12,10 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/flat-admin.css') }}">
 
-    <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>
-
     <!-- jQuery -->
-    <script src="{{ asset('js/plugins/jquery.min.js') }}"></script>            
+    <script src="{{ asset('js/plugins/jquery.min.js') }}"></script>   
+    <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>  
+    
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/red.css') }}">
     <!-- Theme 
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue-sky.css') }}">
@@ -27,7 +27,7 @@
     <title>{{ $page_title }} {{ config('app.name', 'Cat & Mouse') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
 
     <!-- Scripts -->
     <script>
@@ -38,6 +38,18 @@
         $(function() {
             /* select theme */
             $(".app").removeClass("app-blue-sky").removeClass("app-yellow").removeClass("app-red").removeClass("app-green").removeClass("app-default").addClass("app-green");    
+            
+            /* menu */
+            $(".sidebar-toggle").bind("click", function (e) {
+              $("#sidebar").toggleClass("active");
+              $(".app-container").toggleClass("__sidebar");
+            });
+
+            $(".navbar-toggle").bind("click", function (e) {
+              $("#navbar").toggleClass("active");
+              $(".app-container").toggleClass("__navbar");
+            });
+            /* end menu */
         });    
 
     </script>
@@ -54,12 +66,10 @@
     </button>
   </div>
     <!-- menu -->
-    <?php
-    $url = explode('/', Request::url());
-    ?>
+ 
   <div class="sidebar-menu">
     <ul class="sidebar-nav">
-        <li <?php if(array_search('home', $url)){ echo 'class="active"'; } ?> >
+        <li <?php if ( Request::is('home') || Request::is('home/*') ){ echo 'class="active"'; } ?> >
         <a href="{{ url('/home') }} ">
           <div class="icon">
             <i class="fa fa-tasks" aria-hidden="true"></i>
@@ -67,7 +77,7 @@
           <div class="title">Dashboard</div>
         </a>
       </li>      
-    <li class="dropdown <?php if(array_search('orders', $url)){ echo ' active'; } ?> " >
+    <li class="dropdown <?php if ( Request::is('orders') || Request::is('orders/*') ){ echo ' active'; } ?> " >
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           <div class="icon">
             <i class="fa fa-cube" aria-hidden="true"></i>
@@ -82,12 +92,12 @@
           </ul>
         </div>
       </li>      
-      <li <?php if(array_search('profile', $url)){ echo 'class="active"'; } ?> >
-        <a href="{{ url('/profile') }} ">
+      <li <?php if (Request::is('profile') || Request::is('profile/*')){ echo 'class="active"'; } ?> >
+        <a href="{{ url('/profile') }}">
           <div class="icon">
-            <i class="fa fa-tasks" aria-hidden="true"></i>
+            <i class="fa fa-user" aria-hidden="true"></i>
           </div>
-          <div class="title">Account</div>
+          <div class="title">Profile</div>
         </a>
       </li>        
         <!-- end menu -->
@@ -100,7 +110,8 @@
           <i class="fa fa-cogs" aria-hidden="true"></i>
         </a>
       </li>
-      <li><a href="#"><span class="flag-icon flag-icon-th flag-icon-squared"></span></a></li>
+      
+      <li><a href="#"><span class="flag-icon flag-icon-us flag-icon-squared"></span></a></li>
     </ul>
   </div>
 </aside>
@@ -168,7 +179,7 @@
           </div>
         </li>
         <li class="dropdown profile">
-          <a href="/html/pages/profile.html" class="dropdown-toggle"  data-toggle="dropdown">
+          <a href="{{ url('/profile') }}" class="dropdown-toggle"  data-toggle="dropdown">
               <img class="profile-img" src="<?php echo \App\Http\Controllers\UserController::get_gravatar( Auth::user()->email, 80, 'mm','g', false, null ); ?>">
             <div class="title">Profile</div>
           </a>
@@ -178,21 +189,10 @@
             </div>
             <ul class="action">
               <li>
-                <a href="#">
+                <a href="{{ url('/profile') }}">
                   Profile
                 </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="badge badge-danger pull-right">5</span>
-                  My Inbox
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  Setting
-                </a>
-              </li>
+              </li>                        
               <li>
                 <a href="{{ route('logout') }}"
                         onclick="event.preventDefault();
@@ -296,9 +296,7 @@
 </div>
 
   </div>
-  
-
-
+    
 </body>
 </html>
 
