@@ -261,4 +261,11 @@ class InvoiceController extends Controller
         }    
         
         
+    public function showClientInvoices()
+    {
+        $data['invoices'] = Invoice::getAllByUserId(Auth::user()->id);
+        $data['page_title'] = 'Orders';        
+        return view('invoices.list', $data);
+    }        
+        
 }

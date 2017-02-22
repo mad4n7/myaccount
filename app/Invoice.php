@@ -34,6 +34,24 @@ protected $primaryKey = 'invoice_id';
         else {
             return false;
         }
-  }    
+  }   
+  
+  
+    public static function getAllByUserId($user_id)
+    {
+        try{
+          $result = DB::table('invoices')                        
+                        ->where('invoices.user_id', '=', $user_id)                                
+                        ->join('invoices_itens', 'invoices_itens.incoice_id', '=', 'invoices.invoice_id')                        
+                        ->get();
+          
+     
+          return $result;  
+          
+        } catch (Exception $ex) {
+            return 'Error Invoices.getAllByUserId: '. $ex;
+        }
+
+    }    
     
 }

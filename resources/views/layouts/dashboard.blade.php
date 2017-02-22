@@ -91,7 +91,16 @@
             <li><a href="{{ url('orders') }}">My Orders</a></li>                        
           </ul>
         </div>
-      </li>      
+      </li>
+    <li class="dropdown <?php if ( Request::is('invoices') || Request::is('invoices/*') ){ echo ' active'; } ?> " >
+        <a href="{{ url('invoices') }}">
+          <div class="icon">
+            <i class="fa fa-money" aria-hidden="true"></i>
+          </div>
+          <div class="title">Invoices</div>
+        </a>
+        
+      </li>          
       <li <?php if (Request::is('profile') || Request::is('profile/*')){ echo 'class="active"'; } ?> >
         <a href="{{ url('/profile') }}">
           <div class="icon">
