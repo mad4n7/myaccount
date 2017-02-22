@@ -11,7 +11,7 @@ class Invoice extends Model
 protected $table = 'invoices';
 protected $primaryKey = 'invoice_id';
 
-  public function invoice_item()
+  public function invoice_itens()
   {
       return $this->hasMany('App\Invoices_item', 'invoice_id');
   }     
@@ -37,21 +37,5 @@ protected $primaryKey = 'invoice_id';
   }   
   
   
-    public static function getAllByUserId($user_id)
-    {
-        try{
-          $result = DB::table('invoices')                        
-                        ->where('invoices.user_id', '=', $user_id)                                
-                        ->join('invoices_itens', 'invoices_itens.incoice_id', '=', 'invoices.invoice_id')                        
-                        ->get();
-          
-     
-          return $result;  
-          
-        } catch (Exception $ex) {
-            return 'Error Invoices.getAllByUserId: '. $ex;
-        }
 
-    }    
-    
 }

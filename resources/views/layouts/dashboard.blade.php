@@ -24,7 +24,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/yellow.css') }}">
     -->
 
-    <title>{{ $page_title }} {{ config('app.name', 'Cat & Mouse') }}</title>
+    <title>{{ $page_title }} - {{ config('app.name', 'Cat & Mouse') }}</title>
 
     <!-- Styles -->
     

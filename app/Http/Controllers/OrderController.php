@@ -143,11 +143,30 @@ class OrderController extends Controller
         
         $data['order_itens'] = Invoices_item::where('order_id', $id)->get();
         $data['invoice'] = Invoice::where('order_id', $id)->first();
-        
-        $data['page_title'] = 'Payment';
+        $data['order'] = Order::where('order_id', $id)->first();
+                
+        $data['page_title'] = 'Order';
         return view('orders.view', $data); 
     }
 
+    public function showServerDetailsByOrderId($id)
+    {
+        
+        //validate an accesss
+        if( Invoice::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
+        {
+            Session::flash('msg_error', 'Sorry, the invoice that you are trying to access does not belong to you.');
+            return redirect('/home');
+        }   
+        
+        $data['order_itens'] = Invoices_item::where('order_id', $id)->get();
+        $data['invoice'] = Invoice::where('order_id', $id)->first();
+        $data['order'] = Order::where('order_id', $id)->first();
+                
+        $data['page_title'] = 'Server Details';
+        return view('orders.view_server', $data); 
+    }
+    
     /**
      * Show the form for editing the specified resource.
      *

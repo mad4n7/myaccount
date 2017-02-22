@@ -24,7 +24,17 @@
                     <td>{{ $order->domain_name }}</td>
                     <td><?php echo App\Http\Controllers\HelperController::funcDateTimeMysqlToUSA($order->created_at);  ?></td>
                     <td><?php echo App\Http\Controllers\HelperController::returnPymtStatusByChar($order->inv_status); ?></td>
-                    <td><a href="{{ url('orders'.'/'.$order->order_id) }}" title="View"><i class="fa fa-search fa-3x" aria-hidden="true"></i></a></td>
+                    <td>
+                        <div class="row">
+                        <div class="col-md-3"> 
+                            <a href="{{ url('orders'.'/'.$order->order_id) }}" title="View"><i class="fa fa-search fa-3x" aria-hidden="true"></i></a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url('orders/server/details'.'/'.$order->order_id) }}" title="Service Details"><i class="fa fa-laptop fa-3x" aria-hidden="true"></i></a>
+                        </div>
+                        </div>
+                    </td>
+                    
                 </tr>   
                 <?php } ?>
             </table>            

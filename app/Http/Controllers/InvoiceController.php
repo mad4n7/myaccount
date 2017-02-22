@@ -263,9 +263,24 @@ class InvoiceController extends Controller
         
     public function showClientInvoices()
     {
-        $data['invoices'] = Invoice::getAllByUserId(Auth::user()->id);
-        $data['page_title'] = 'Orders';        
+        $data['invoices'] = Invoice::where('user_id', Auth::user()->id)->orderBy('invoice_id', 'desc')->get();
+        $data['page_title'] = 'Invoices';        
         return view('invoices.list', $data);
-    }        
+    }    
+
+    public function showClientInvoiceById($id)
+    {
+        //validate an accesss
+        if( Invoice::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
+        {
+            Session::flash('msg_error', 'Sorry, the invoice that you are trying to access does not belong to you.');
+            return redirect('/home');
+        }        
+        
+        $data['invoice'] = Invoice::find($id);
+        $data['invoice_itens'] = Invoice::find($id)->invoice_itens;
+        $data['page_title'] = 'Invoices';        
+        return view('invoices.view', $data);
+    }     
         
 }
