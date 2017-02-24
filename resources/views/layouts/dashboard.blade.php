@@ -60,7 +60,7 @@
 
 <aside class="app-sidebar" id="sidebar">
   <div class="sidebar-header">
-      <a class="sidebar-brand" href="{{ url('/') }}"><img src="{{ asset('images/logo_small.png') }}" style="height: 60%;" /></a>
+      <a class="sidebar-brand" href="{{ url('/') }}"><img src="{{ asset('images/catmouse-logo.png') }}" style="width: auto; height: 90px;" /></a>
     <button type="button" class="sidebar-toggle">
       <i class="fa fa-times"></i>
     </button>
@@ -138,7 +138,7 @@
           </button>
         </li>
         <li class="logo">
-          <a class="navbar-brand" href="#"><img src="{{ asset('images/logo_small.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
+          <a class="navbar-brand" href="#"><img src="{{ asset('images/catmouse-logo-type.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
         </li>
         
       </ul>

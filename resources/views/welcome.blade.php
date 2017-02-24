@@ -79,15 +79,28 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Awesome!
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <p>We look forward to working with you.</p>
+                    <p>Please continue by logging into your account.</p>
+                </div>
+                
+                <div>
+                    username<br>
+                    password
+                </div>
+                
+                <div class="links">
+                    <p>Don't have an account? Create one in a jiffy!</p>
+                </div>
+                <div>
+                    username<br>
+                    email address<br>
+                    password<br>
+                    confirm password
+                    
                 </div>
             </div>
         </div>

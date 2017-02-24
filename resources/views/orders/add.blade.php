@@ -166,7 +166,7 @@
             foreach ($products as $product) { 
                 ?>
 
-              <div class="col-md-3 col-sm-6">
+              <div class="col-md-4 col-sm-6">
                 <div id="pricing-table-item-{{ $i }}" class="pricing-table no-border-left">
                   <div class="pricing-heading">
                     <div class="title">{{ $product->prod_name }}</div>
