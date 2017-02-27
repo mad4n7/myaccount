@@ -8,10 +8,15 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/custom_fonts.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
+    
+    
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/flat-admin.css') }}">
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="32x32">
+    
     <!-- jQuery -->
     <script src="{{ asset('js/plugins/jquery.min.js') }}"></script>   
     <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>  
@@ -60,7 +65,7 @@
 
 <aside class="app-sidebar" id="sidebar">
   <div class="sidebar-header">
-      <a class="sidebar-brand" href="{{ url('/') }}"><img src="{{ asset('images/catmouse-logo.png') }}" style="width: auto; height: 90px;" /></a>
+      <a class="sidebar-brand" href="{{ url('/home') }}"><img src="{{ asset('images/catmouse-logo.png') }}" style="width: auto; height: 90px;" /></a>
     <button type="button" class="sidebar-toggle">
       <i class="fa fa-times"></i>
     </button>
@@ -138,7 +143,7 @@
           </button>
         </li>
         <li class="logo">
-          <a class="navbar-brand" href="#"><img src="{{ asset('images/catmouse-logo-type.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
+          <a class="navbar-brand" href="{{ url('/home') }}"><img src="{{ asset('images/catmouse-logo-type.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
         </li>
         
       </ul>
@@ -148,7 +153,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
-        
+        <!--
         <li class="dropdown notification danger">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
@@ -187,6 +192,9 @@
             </ul>
           </div>
         </li>
+        -->
+        
+        <?php if (Auth::check()) {  ?>
         <li class="dropdown profile">
           <a href="{{ url('/profile') }}" class="dropdown-toggle"  data-toggle="dropdown">
               <img class="profile-img" src="<?php echo \App\Http\Controllers\UserController::get_gravatar( Auth::user()->email, 80, 'mm','g', false, null ); ?>">
@@ -215,6 +223,7 @@
             </ul>
           </div>
         </li>
+        <?php } ?>
       </ul>
     </div>
   </div>
@@ -271,19 +280,21 @@
         echo '</div>';
     }   
     else {
-        //check e-mail confirmation
-        $tmp_user_details = \App\User_detail::where('user_id', Auth::user()->id)->first();
-        if($tmp_user_details->activated != 1) {        
-            echo '<div class="row">';
-            echo '<div class="col-xs-1">&nbsp;</div>';
-            echo '<div class="alert alert-danger alert-dismissable"  role="alert">';
-            echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
-            echo '<span class="sr-only">Close</span></button>';
-            echo 'We could not confirm your e-mail address.Please, check your e-mail to confirm your account.';
-            echo '<br /> <a href="'.url('safe/token/resend').'">Click here to resend the confirmation code e-mail.</a>';
-            echo '</div><div class="col-xs-1">&nbsp;</div>';
-            echo '</div>';
-        }     
+        if (Auth::check()) {
+            //check e-mail confirmation
+            $tmp_user_details = \App\User_detail::where('user_id', Auth::user()->id)->first();
+            if($tmp_user_details->activated != 1) {        
+                echo '<div class="row">';
+                echo '<div class="col-xs-1">&nbsp;</div>';
+                echo '<div class="alert alert-danger alert-dismissable"  role="alert">';
+                echo '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>';
+                echo '<span class="sr-only">Close</span></button>';
+                echo 'We could not confirm your e-mail address.Please, check your e-mail to confirm your account.';
+                echo '<br /> <a href="'.url('safe/token/resend').'">Click here to resend the confirmation code e-mail.</a>';
+                echo '</div><div class="col-xs-1">&nbsp;</div>';
+                echo '</div>';
+            }     
+        }
     }
     ?>    
     

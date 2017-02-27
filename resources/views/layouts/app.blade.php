@@ -7,20 +7,21 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    
     <title>{{ config('app.name', 'Laravel') }}</title>
-
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/custom_fonts.css') }}">
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="32x32">
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+    @yield('header_tags')
 </head>
-<body>
+<body style="font-family: WoodfordBourne;">
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
@@ -36,7 +37,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        <a class="navbar-brand" href="{{ url('/') }}"><img src="{{ asset('images/catmouse-logo-type.png') }}" style="height: 90%;" /></a>
                     </a>
                 </div>
 

@@ -5,44 +5,35 @@
 
 
 <script>
-    $(function() {
+    $(function() {               
+        
         $("#term-length").hide();
         
-        /* select the product */
-        $( ".btn_product" ).click(function() {
-            $("#term-length").show();
-            
-            <?php
-            $i = 0;
-            foreach($products as $product){
-                echo '$("#pricing-table-item-'.$i.'" ).removeClass( "highlight" );';
-                $i++;
-            }
-            ?>
-            
-            
-            var current_number = $(this).attr('data-product-order');
-            var product_id = $(this).attr('data-product-id');
-            var product_price_month = $(this).attr('data-product-price-month');
-            var product_price_year = $(this).attr('data-product-price-year');
-            
-            $("#pricing-table-item-" + current_number ).addClass( "highlight" );
-            $("#product_id").val( product_id );
-            
-            $("#price_month").html( product_price_month );
-            $("#term_length_month").val(product_price_month );
-            $("#price_year").html( product_price_year );
-            $("#term_length_year").val(product_price_year );
-            sumItens();
-            
-        });  
+        var urlParams = new URLSearchParams(window.location.search);
+        var product = urlParams.get('product');
+        if(product > 0){
+            changeCycle();
+        }
         
         
         /* Form validation */
         $("#frmSend").validate({
                 rules: {
+                    
+                        <?php if (!Auth::check()) {  ?>  
+                        name: "required",
+                        email: "required",
+                        password: "required",
+                        password_confirmation: {
+                          equalTo: "#password"
+                        },
+                        <?php } ?>
+                    
                         domain_name: "required",
-                        terms_conditions: "required"
+                        terms_conditions: "required",
+                        product_id: "required",
+                        hosting_plan: "required",
+                        billing_cycle: "required"
                 },
                 messages: {
                         domain_name: "Please, type the website address(domain name)",
@@ -52,35 +43,128 @@
                     var name = $(element).attr("name");
                     error.appendTo($("#" + name + "_validate"));
                 }
+        });  
+        
+        /* Shows the new prices according to the Billing Cycle */
+        $( "#billing_cycle" ).change(function() {            
+            
+            var type = $("#billing_cycle").val();
+            var product_id = $("#hosting_plan").val();
+            var price = "";
+            var plan_renews = "";
+            
+            
+            $.getJSON ('<?php echo url('json/invoices/get_renews_on_by_billing_cycle'); ?>?type=' + type , function (str_date){                                                
+
+                $.getJSON ('<?php echo url('json/invoices/get_prices_by_product'); ?>?id=' + product_id , function (data){                                                
+
+                    if(type == 'monthly'){
+                        price = data.monthly_price;
+                        plan_renews = "( Renews Monthly )";
+                    }
+                    else {
+                        price = data.anually_price;
+                        plan_renews = "( Renews Anually )";
+                    }               
+                    /* When it will renew) */
+                    $("#plan_renews").replaceWith('<div id="plan_renews"  class="text-muted">Plan renews ' + str_date + ' at $ ' + price + '</div>');                                           
+                    $('#db_product_price').val(price); //defines produt price
+                    $('#product_id').val(product_id);   //defines product id
+                    $('#product_periodicity').val(type); // periodicity
+                    
+                    /* Review section */        
+                    $("#review_product").replaceWith('<div id="review_product" data-price="' + price + '" class="lead">' 
+                            + data.product_name  + ' <strong class="pull-right"> $ ' + price +' </strong> ' + plan_renews + ' </div>');                    
+                    sumItens();
+                });
+            }); 
+        });    
+        
+        $( "#ckb_add_migrate" ).change(function() {
+            /* div review migration */      
+            sumItens(); // sum items
+            var checked_input = $(this).is(':checked');
+            if(!checked_input){
+                $("#review_extra_migration").replaceWith('<div id="review_extra_migration" class="lead">' 
+                                    + '</div>');                
+            }
+            else {
+            $("#review_extra_migration").replaceWith('<div id="review_extra_migration" class="lead">' 
+                    + 'Migrate my Website <strong class="pull-right"> $ 60 </strong> </div>');                            
+            }
+        });
+        
+        $( "#ckb_add_ssl" ).change(function() {
+            sumItens(); // sum items
+            var checked_input = $(this).is(':checked');
+            /* div review migration */    
+            if(!checked_input){
+                $("#review_extra_ssl").replaceWith('<div id="review_extra_ssl" class="lead"></div>');                            
+            }
+            else {
+                $("#review_extra_ssl").replaceWith('<div id="review_extra_ssl" class="lead">' 
+                        + 'SSL Certificate <strong class="pull-right"> $ 24 </strong> </div>');                                            
+            }
         });        
         
-        
 
+        /* end plan renews */        
         
     });    
     
-    function sumItens(){
-        var total = 0;    
+    
+    /* cycle */
+    function changeCycle(){
+    
+        /* reset */
+        $('#billing_cycle')
+            .find('option')
+            .remove()
+            .end()
+            .append('<option value="">(Select)</option>')
+            .val('select');
+
+        $("#plan_renews").replaceWith('<div id="plan_renews"></div>');
+        /* end reset */
         
-        var order = $( "input[type=radio][name=term_length]:checked" );
-        var selected_price = order.val();
-        var selected_period = order.attr('data-period');
-        //console.log("Period:" + selected_period);
-        $("#product_periodicity").val( selected_period );
+        var id = $("#hosting_plan").val()
+        $.getJSON ('<?php echo url('json/invoices/get_prices_by_product'); ?>?id=' + id , function (data){                                                
+            
+            $("#billing_cycle").append('<option value="anually" '+
+                    ' data-price="' + data.anually_price + '" >Anually - $' 
+                    + data.anually_monthly_price + ' per month - $' 
+                    + data.anually_price + ' ( Save 14%! )</option>');
+            $("#billing_cycle").append('<option value="monthly" '+
+                    ' data-price="' + data.monthly_price + '">Monthly - $'  
+                    + data.monthly_price + ' per month </option>');            
+            sumItens(); // sum items
+        });    
+    }    
+    /* end Cycle */
+    
+
+    
+    
+    function sumItens(){
                 
+        var total = 0;    
+          
         if ( $('input[name="ckb_add_migrate"]').is(':checked') ) {
             var item_total = $('input[name="ckb_add_migrate"]').val();
-            total += parseFloat(item_total);        
+            total += parseFloat(item_total);    
+            console.log("migrate");
         } 
         if ( $('input[name="ckb_add_ssl"]').is(':checked') ) {
             var item_total = $('input[name="ckb_add_ssl"]').val();
             total += parseFloat(item_total); 
+            console.log("ssl");
         }                 
+            
+        total += parseFloat($('#review_product').attr("data-price"));
         
-        total += parseFloat(selected_price);        
-        console.log(total);
+        console.log('Total:' + total);
 
-        $("#price_total").html( total );
+        $("#price_total").html( total.toFixed(2) );
         
          
     }
@@ -91,10 +175,11 @@
 @section('content')
 
 <div class="col-sm-16 col-xs-12">
-    <form class="form form-horizontal" id="frmSend" method="POST" action="{{ url('orders') }}">
+    <form class="form form-horizontal" id="frmSend" method="POST" action="{{ url('/products/order') }}">
     {{ csrf_field() }}
     <input type="hidden" name="product_id" id="product_id" value="" />    
-    <input type="hidden" name="product_periodicity" id="product_periodicity" value="" />    
+    <input type="hidden" name="product_periodicity" id="product_periodicity" value="" />            
+    <input type="hidden" name="db_product_price" id="db_product_price" value="" />        
     
     <div class="card">
         <div class="card-header">
@@ -110,8 +195,8 @@
                         <a href="#step1" role="tab" id="step1-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-check"></div>
                             <div class="heading">
-                                <div class="title">Confirm Orders</div>
-                                <div class="description">Confirmation your purchases</div>
+                                <div class="title">Select your product</div>
+                                <div class="description">Select the best option for your business</div>
                             </div>
                         </a>
                     </li>                    
@@ -120,7 +205,7 @@
                             <div class="icon fa fa-credit-card"></div>
                             <div class="heading">
                                 <div class="title">Payment</div>
-                                <div class="description">Billing Information.</div>
+                                <div class="description">Billing Information</div>
                             </div>
                         </a>
                     </li>
@@ -129,8 +214,8 @@
                         <a href="#step3" role="tab" id="step3-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-server "></div>
                             <div class="heading">
-                                <div class="title">Purchase Successfully</div>
-                                <div class="description">Wait for us to setup your account</div>
+                                <div class="title">Purchase Successful</div>
+                                <div class="description">We'll have you up and running within 24 hours</div>
                             </div>
                         </a>
                     </li>
@@ -151,78 +236,8 @@
             </div>
             </div>    
           
-          <!-- pricing table -->
-    <div class="row">
-        <div class="col-xs-12">
-          <div class="card">
-            <div class="card-header">
-              Hosting Plans
-            </div>                  
-        <div class="card-body no-padding">
-            <div class="row no-gap">
-                
-            <?php
-            $i = 0;
-            foreach ($products as $product) { 
-                ?>
-
-              <div class="col-md-4 col-sm-6">
-                <div id="pricing-table-item-{{ $i }}" class="pricing-table no-border-left">
-                  <div class="pricing-heading">
-                    <div class="title">{{ $product->prod_name }}</div>
-                    <div class="price">
-                      <div class="title">{{ $product->price_month }}<span class="sign">$</span></div>
-                      <div class="subtitle">per month</div>
-                    </div>
-
-                  </div>
-                  <div class="pricing-body">
-                    <ul class="description">                      
-                      <li><i class="icon ion-person-stalker"></i> <?php echo $product->prod_description; ?> </li>
-                      <!-- <li><i class="icon ion-ios-chatboxes-outline"></i> or $ {{ $product->price_year }} <span class="small">/ year</span></li> -->
-                    </ul>
-                  </div>
-                  <div class="pricing-footer">
-                      <button type="button" class="btn btn-default btn-success btn_product" 
-                              data-product-order="{{ $i }}" 
-                              data-product-id="{{ $product->product_id }}"
-                              data-product-price-month="{{ $product->price_month }}"
-                              data-product-price-year="{{ $product->price_year }}">Select</button>
-                  </div>
-                </div>
-              </div>
-            <?php $i++; } ?>  
-                
-            </div>
-          </div>
-            </div>
-        </div>
-    </div>
-    <!-- end  pricing table -->
-    <br />
-    <div id="term-length" class="section">
-      <div class="section-title">Select term length</div>
-      <div class="section-body">
-
-        <div class="radio">
-            <input type="radio" name="term_length" id="term_length_month" data-period="month" value="0" onchange="sumItens()" >
-            <label for="term_length_month" class="lead">
-                &nbsp; 1 month - $ <span id="price_month"></span>
-            </label>
-            
-        </div>
-        <div class="radio">
-            <input type="radio" name="term_length" id="term_length_year"  data-period="year" value="0"  onchange="sumItens()" checked>
-            <label for="term_length_year" class="lead">
-                &nbsp; 12 months - $ <span id="price_year"></span> <span class="small text-danger">( Save 14% )</span>
-            </label>            
-        </div>
-          <div id="price_selected" class="price_itens"></div>
-
-
-      </div>
-    </div>            
           
+    <br />                      
           
     <div class="row">
         <div class="col-xs-12">
@@ -231,69 +246,163 @@
         <div class="card-body">
         
             
-        <div class="section">
-          <div class="section-title">Domain name</div>
-          <div class="section-body">
-
+            
+            
+<div class="panel panel-success">
+    <div class="panel-heading lead">Choosing a Hosting Plan</div>
+  <div class="panel-body">
+      
            <div class="form-group">
-              <label class="col-md-3 control-label">Domain name</label>
-              <div class="col-md-6">
-                <input type="text" id="domain_name" name="domain_name" class="form-control" placeholder="">
-                <div id="domain_name_validate"></div>
+              <label class="col-md-3 control-label">Hosting Plan</label>
+              <div class="col-md-6">                
+                  <select class="select2" name="hosting_plan" 
+                          id="hosting_plan" onchange="changeCycle()" autofocus>
+                      <option value="">Please select a hosting plan</option> 
+                    <?php foreach ($products as $product) { ?>
+                      <option value="{{ $product->product_id }}" 
+                          <?php if( isset($selected_product) && $selected_product == $product->product_id) { echo 'selected'; } ?> >{{ $product->prod_name }}</option> 
+                    <?php } ?>
+                </select>                
+                  <div class="text-danger" id="hosting_plan_validate"></div>
               </div>
             </div>
               
            <div class="form-group">
-              <label class="col-md-3 control-label">Additional services</label>
-              <div class="col-md-9">           
+              <label class="col-md-3 control-label">Billing Cycle</label>
+              <div class="col-md-6">
+                <select class="select2" name="billing_cycle" id="billing_cycle">                
+                  <option value="">Select...</option>                   
+                </select>  
+                <div class="text-danger" id="billing_cycle_validate"></div>
+              </div>
+            </div>
+            
+           <div class="form-group">
+              <label class="col-md-3 control-label"></label>
+              <div class="col-md-6">                
+                  <div id="plan_renews" class="text-muted"></div>
+              </div>
+            </div>      
+      
+  </div>
+</div>
+            
+        <div class="panel panel-success">
+            <div class="panel-heading lead">Choose a Domain</div>
+          <div class="panel-body">
+
+                   <div class="form-group">
+                      <label class="col-md-3 control-label">Domain name</label>
+                      <div class="col-md-6">
+                        <input type="text" id="domain_name" name="domain_name" class="form-control" placeholder="yourbusiness.com">
+                        <div class="text-danger" id="domain_name_validate"></div>
+                      </div>
+                    </div>                 
+
+          </div>
+        </div> 
+            
+        <?php if (!Auth::check()) {  ?>    
+        <!-- billing -->    
+        <div class="panel panel-success">
+            <div class="panel-heading lead">Enter Your Billing Information</div>
+          <div class="panel-body">
+
+                <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                    <label for="name" class="col-md-4 control-label">Full Name</label>
+
+                    <div class="col-md-6">
+                        <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required>
+                        <div class="text-danger" id="name_validate"></div>
+                    </div>
+                </div>
+
+                <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                    <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+
+                    <div class="col-md-6">
+                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+                        <div class="text-danger" id="email_validate"></div>
+                    </div>
+                </div>
+
+                <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                    <label for="password" class="col-md-4 control-label">Password</label>
+
+                    <div class="col-md-6">
+                        <input id="password" type="password" class="form-control" name="password" required>
+                        <div class="text-danger" id="password_validate"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
+
+                    <div class="col-md-6">
+                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                    </div>
+                </div>
+          </div>
+        </div>             
+        <!-- end billing -->    
+        <?php } ?>    
+        
+        <div class="panel panel-success">
+            <div class="panel-heading lead">Recommended Additional Services</div>
+          <div class="panel-body">
                   
                 <div class="checkbox">
-                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="140" onchange="sumItens()">
+                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="60" onchange="sumItens()">
                     <label for="ckb_add_migrate">
-                        &nbsp; Migrate my website ( $ 140 up to 3 websites )
-                    </label>
+                        &nbsp; Migrate my Website   
+                        <p class="text-muted"> 
+                            $ 60 up to 3 websites ( Billed once )<br />
+                            We can migrate your website from the actual hosting to Cat&Mouse Hosting.
+                        </p>
+                    </label>                    
                 </div>
                   
                 <div class="checkbox">
                     <input type="checkbox" id="ckb_add_ssl" name="ckb_add_ssl" value="24"  onchange="sumItens()">
                     <label for="ckb_add_ssl">
-                        &nbsp; SSL Certificate ( $ 24 / year )
+                        &nbsp; SSL Certificate 
+                        <p class="text-muted">$ 24 ( Billed Anually )</p>
                     </label>
-                </div>                  
-                
-              </div>                           
-            </div>              
+                </div>                
+
           </div>
         </div>
             
+            
+        <div class="panel panel-success">
+            <div class="panel-heading lead">Review Your Order Details</div>
+          <div class="panel-body">                  
+            <table class="table table-striped">
+                <tr>
+                    <td>
+                        <div id="review_product" data-price="0" class="col-md-9"></div>
+                        <div id="review_extra_migration" class="col-md-9"></div>
+                        <div id="review_extra_ssl" class="col-md-9"></div>
+                        <div id="review_results" class="col-md-9"></div>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="review_results" class="lead">
+                            Amount Due: 
+                            <strong class="pull-right">$ <span id="price_total"></span> </strong>
+                        </div>
+                    </td>
+                </tr>                
+            </table>        
 
-        <!-- total -->
-        <div class="section">
-          <div class="section-title">Amount</div>
-          <div class="section-body">
-
-           <div class="form-group">
-              <label class="col-md-3 control-label">Total</label>
-              <div class="col-md-6">
-                  <div class="lead text-success"><strong>$ <span id="price_total"></span></strong></div>
-                <div class="text-danger" id="domain_name_validate"></div>
-              </div>
-            </div>
-                         
-                
-              </div>                           
-            </div>              
           </div>
-        </div>        
-        <!-- end total -->
-        <div class="section">
-          <br />
-          <div class="section-body">
-
-              
+        </div>
+        
            <div class="form-group">
-              <label class="col-md-3 control-label">Do you agree with our Terms and Conditions?</label>
-              <div class="col-md-9">           
+              <label class="col-md-4 control-label">Do you agree with our Terms and Conditions?</label>
+              <div class="col-md-8">           
                
                 <div class="checkbox">
                     <input type="checkbox" id="terms_conditions" name="terms_conditions">
@@ -305,17 +414,21 @@
                 </div>                  
                 
               </div>                           
-            </div>              
-          </div>
-        </div>            
-          
+            </div>        
+        
             <div class="form-footer">
                 <div class="form-group">
                   <div class="col-md-2 pull-right">
-                    <button type="submit" class="btn btn-primary btn-lg">Continue</button>
+                      <button type="submit" class="btn btn-primary btn-lg">Continue</button>
                   </div>
                 </div>
-            </div>
+            </div>        
+              
+          </div>
+        </div>        
+        <!-- end total -->
+        
+
         
             
           </div>

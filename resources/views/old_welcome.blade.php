@@ -1,13 +1,25 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="{{ config('app.locale') }}">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <title>Laravel</title>
 
-
-@section('header_tags')
-        <!-- Fonts 
+        <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-        -->
+
         <!-- Styles -->
-        <style>            
+        <style>
+            html, body {
+                background-color: #fff;
+                color: #636b6f;
+                font-family: 'Raleway', sans-serif;
+                font-weight: 100;
+                height: 100vh;
+                margin: 0;
+            }
 
             .full-height {
                 height: 100vh;
@@ -51,13 +63,19 @@
                 margin-bottom: 30px;
             }
         </style>
-@endsection
-
-@section('content')
-<div class="panel panel-default">
-    <div class="panel-body">
-<div class="flex-center position-ref full-height">
-            
+    </head>
+    <body>
+        <div class="flex-center position-ref full-height">
+            @if (Route::has('login'))
+                <div class="top-right links">
+                    @if (Auth::check())
+                        <a href="{{ url('/home') }}">Home</a>
+                    @else
+                        <a href="{{ url('/login') }}">Login</a>
+                        <a href="{{ url('/register') }}">Register</a>
+                    @endif
+                </div>
+            @endif
 
             <div class="content">
                 <div class="title m-b-md">
@@ -72,7 +90,7 @@
                 <!-- Login section -->
                 <div>
                     <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-8 col-md-offset-2">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">Login</div>
                                     <div class="panel-body">
@@ -82,7 +100,7 @@
                                             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                                                 <label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
-                                                <div class="col-md-8">
+                                                <div class="col-md-6">
                                                     <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
 
                                                     @if ($errors->has('email'))
@@ -96,7 +114,7 @@
                                             <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                                                 <label for="password" class="col-md-4 control-label">Password</label>
 
-                                                <div class="col-md-8">
+                                                <div class="col-md-6">
                                                     <input id="password" type="password" class="form-control" name="password" required>
 
                                                     @if ($errors->has('password'))
@@ -108,7 +126,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <div class="col-md-8 col-md-offset-5">
+                                                <div class="col-md-6 col-md-offset-4">
                                                     <div class="checkbox">
                                                         <label>
                                                             <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
@@ -119,7 +137,7 @@
 
                                             <div class="form-group">
                                                 <div class="col-md-8 col-md-offset-4">
-                                                    <button type="submit" class="btn btn-primary form-control">
+                                                    <button type="submit" class="btn btn-primary">
                                                         Login
                                                     </button>
 
@@ -137,16 +155,16 @@
                 <!-- end login section -->
                 
                 <div class="links">
-                    <p><a href="{{ route('register') }}">Don't have an account? Create one in a jiffy!</a></p>
+                    <p>Don't have an account? Create one in a jiffy!</p>
                 </div>
-                <!-- Register section -->
                 <div>
-                    
+                    username<br>
+                    email address<br>
+                    password<br>
+                    confirm password
                     
                 </div>
-                <!-- Register section -->
             </div>
         </div>
-    </div>
-    
-@endsection
+    </body>
+</html>

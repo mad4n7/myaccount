@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -19,6 +19,7 @@ use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
 use PayPal\Api\PaymentExecution;
 
+use App\Product;
 use App\Invoice;
 
 class InvoiceController extends Controller
@@ -27,7 +28,7 @@ class InvoiceController extends Controller
     
     public function __construct()
     {
-            $this->middleware('auth');
+            //$this->middleware('auth');
 
 
 
@@ -243,7 +244,7 @@ class InvoiceController extends Controller
 
                  
                 /* END Send e-mail to managers */
-                $data['message'] = 'We received your payment with success. Our team will contact you soon.';
+                $data['message'] = 'We processed your payment successfully. Our team will contact you soon.';
                 $data['page_title'] = 'Payment Status';
                 $data['approved'] = 1;
                 return view('invoices/status', $data);
@@ -281,6 +282,32 @@ class InvoiceController extends Controller
         $data['invoice_itens'] = Invoice::find($id)->invoice_itens;
         $data['page_title'] = 'Invoices';        
         return view('invoices.view', $data);
+    }    
+    
+    public function jsonGetPricesByProduct()
+    {
+        $product = Product::find(Request::query('id'));
+
+
+        $data["anually_price"] = $product->price_year;
+        $data["anually_monthly_price"] =  round($product->price_year/12,2);
+        $data["monthly_price"] = $product->price_month;
+        $data["product_name"] = $product->prod_name;
+
+        return json_encode($data);
+    }  
+    
+    public function jsonGetCycleByType()
+    {
+        if(Request::query('type') == 'monthly'){
+            $date = HelperController::returnNextMonth(date('Y-m-d'), 2);
+        }
+        else {
+            $date = HelperController::returnNextYear(date('Y-m-d'), 2);
+        }
+
+
+        return json_encode($date);
     }     
         
 }

@@ -36,8 +36,8 @@
                         <a href="#step1" role="tab" id="step1-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-check"></div>
                             <div class="heading">
-                                <div class="title">Confirm Orders</div>
-                                <div class="description">Confirmation your purchases</div>
+                                <div class="title">Select your product</div>
+                                <div class="description">Select the best option for your business</div>
                             </div>
                         </a>
                     </li>                    
@@ -46,7 +46,7 @@
                             <div class="icon fa fa-credit-card"></div>
                             <div class="heading">
                                 <div class="title">Payment</div>
-                                <div class="description">Billing Information.</div>
+                                <div class="description">Billing Information</div>
                             </div>
                         </a>
                     </li>
@@ -55,8 +55,8 @@
                         <a href="#step3" role="tab" id="step3-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-server "></div>
                             <div class="heading">
-                                <div class="title">Purchase Successfully</div>
-                                <div class="description">Wait for us to setup your account</div>
+                                <div class="title">Purchase Successful</div>
+                                <div class="description">We'll have you up and running within 24 hours</div>
                             </div>
                         </a>
                     </li>
@@ -135,7 +135,8 @@
             </div>
             
           </div>
-        </div>            
+        </div>  
+            <div><p class="text-muted">* We are only processing payments through PayPal at this time.</p></div>
         <?php } ?>  
         <!-- end total -->
             

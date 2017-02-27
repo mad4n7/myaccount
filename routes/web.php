@@ -15,7 +15,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/order', function () {   
+    return view('products');
+});
+
 Auth::routes();
+
+Route::get('/products', 'PublicController@products');
+Route::get('/products/order', 'PublicController@order');
+Route::post('/products/order', 'PublicController@addOrder');
 
 Route::get('/home', 'HomeController@index');
 Route::get('safe/token/confirm/{token}', 'HelperController@confirmToken');
@@ -24,6 +32,10 @@ Route::get('safe/token/resend', 'HelperController@tokenResend');
 
 Route::get('invoice/status', 'InvoiceController@getPayPalPaymentStatus');
 Route::get('invoice/cancel', 'InvoiceController@showPaymentCancel');
+
+
+Route::get('json/invoices/get_prices_by_product', 'InvoiceController@jsonGetPricesByProduct');
+Route::get('json/invoices/get_renews_on_by_billing_cycle', 'InvoiceController@jsonGetCycleByType');
 
 
 Route::group(['middleware' => 'auth'], function()

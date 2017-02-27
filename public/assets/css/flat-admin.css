@@ -1763,7 +1763,7 @@ body {
 
 html, body {
   width: 100%;
-  font-family: 'Open Sans', sans-serif;
+  font-family: WoodfordBourne;
   color: #444;
   position: relative; }
 
@@ -4317,7 +4317,10 @@ input ::-webkit-input-placeholder {
     .checkbox label:before, .radio label:before {
       content: '';
       border: 1px solid #c8d1d3;
-      border-bottom: 2px solid #c8d1d3; }
+      border-bottom: 2px solid #c8d1d3;
+      position: absolute;
+      top: 13px;
+    }
     .checkbox label:after, .radio label:after {
       content: '';
       font-family: FontAwesome;
@@ -4325,7 +4328,9 @@ input ::-webkit-input-placeholder {
       border-radius: 2px;
       color: #18aa4a;
       font-size: 0.95em;
-      border: 1px solid transparent; }
+      border: 1px solid transparent;
+          position: absolute;
+      top: 13px;}
   .checkbox input:checked + label::after, .radio input:checked + label::after {
     content: '\f00c';
     color: #FFF;

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use DateInterval;
 use DateTime;
 
 use App\User;
@@ -183,7 +184,15 @@ class HelperController extends Controller
         }
 
 
-        
+        function calculateOrdinal($number) {
+            $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+            if ((($number % 100) >= 11) && (($number%100) <= 13))
+                return $number. 'th';
+            else
+                return $number. $ends[$number % 10];
+        }
+
+
         /**
          * Return the next month
          * Example:
@@ -195,23 +204,35 @@ class HelperController extends Controller
          * @param type $month
          * @return DateTime(YYYY-mm-dd)
          */
-        public static function returnNextMonth($string_date){
+        public static function returnNextMonth($string_date,$format){
             $date = new DateTime($string_date);
-            $date->add(new DateInterval('P1M'));
-            $new_date = $date->format('Y-m-d');
-
-            if($date->format('m') == idate('m', strtotime($string_date))+2){
-                    $new_month = idate('m', strtotime($new_date))-1;            
-                    $year1 = idate('Y', strtotime($string_date));                                    
-                    $lastday = cal_days_in_month(CAL_GREGORIAN, $new_month, $year1); // 31
-                    $date2 = new DateTime($year1.'-'.$new_month.'-'.$lastday);
-                    $date_ok = $date2->format('Y-m-d');
+            $date->add(new DateInterval('P1M'));            
+            
+            if($format == 1 ) {
+                $new_date = $date->format('Y-m-d');
             }
             else {
-                $date_ok = $new_date;
-            }        
+                $new_date = $date->format('F dS, Y');
+            }            
+              
             return $new_date;
         }        
+        
+        public static function returnNextYear($string_date, $format){
+            
+            
+            $date = new DateTime($string_date);
+            $date->add(new DateInterval('P1Y'));
+            
+            if($format == 1 ) {
+                $new_date = $date->format('Y-m-d');
+            }
+            else {
+                $new_date = $date->format('F dS, Y');
+            }
+              
+            return $new_date;
+        }
         
         //////////////////////////////////////////////////////////////////////
         //PARA: Date Should In YYYY-MM-DD Format

@@ -1,0 +1,16 @@
+
+@font-face {
+    font-family: WoodfordBourne;
+    src: url(custom_fonts/woodfordbourne-bold-webfont.ttf);
+    font-weight: bold;
+}
+@font-face {
+    font-family: WoodfordBourne;
+    src: url(custom_fonts/woodfordbourne-regular-webfont.ttf);
+    font-weight: normal;
+}		
+@font-face {
+    font-family: WoodfordBourne;
+        src: url(custom_fonts/woodfordbourne-thin-webfont.ttf);
+        font-style: italic, oblique;
+}	
