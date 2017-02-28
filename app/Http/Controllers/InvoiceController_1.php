@@ -18,16 +18,6 @@ use PayPal\Api\Payment;
 use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
 use PayPal\Api\PaymentExecution;
-use PayPal\Api\Agreement;
-use PayPal\Api\Plan;
-use PayPal\Api\ShippingAddress;
-use PayPal\Api\Patch;
-use PayPal\Api\PatchRequest;
-use PayPal\Common\PayPalModel;
-use PayPal\Api\ChargeModel;
-use PayPal\Api\Currency;
-use PayPal\Api\MerchantPreferences;
-use PayPal\Api\PaymentDefinition;
 
 use App\Product;
 use App\Invoice;
@@ -109,73 +99,79 @@ class InvoiceController extends Controller
             $payment_db = Invoice::find($id);            
             $items_invoice = Invoice::find($payment_db->invoice_id)->invoice_itens;
                         
-
-// Create a new instance of Plan object
-$plan = new Plan();
-
-// # Basic Information
-// Fill up the basic information that is required for the plan
-$plan->setName('T-Shirt of the Month Club Plan')
-    ->setDescription('Template creation.')
-    ->setType('fixed');
-
-// # Payment definitions for this billing plan.
-$paymentDefinition = new PaymentDefinition();
-
-// The possible values for such setters are mentioned in the setter method documentation.
-// Just open the class file. e.g. lib/PayPal/Api/PaymentDefinition.php and look for setFrequency method.
-// You should be able to see the acceptable values in the comments.
-$paymentDefinition->setName('Regular Payments')
-    ->setType('REGULAR')
-    ->setFrequency('Month')
-    ->setFrequencyInterval("2")
-    ->setCycles("12")
-    ->setAmount(new Currency(array('value' => 153.49, 'currency' => 'USD'))); // plan price
-
-// Charge Models
-/*
-$chargeModel = new ChargeModel();
-$chargeModel->setType('SHIPPING')
-    ->setAmount(new Currency(array('value' => 10, 'currency' => 'USD')));
-
-$paymentDefinition->setChargeModels(array($chargeModel));
-*/
-$merchantPreferences = new MerchantPreferences();
-$baseUrl = url('/');
-// ReturnURL and CancelURL are not required and used when creating billing agreement with payment_method as "credit_card".
-// However, it is generally a good idea to set these values, in case you plan to create billing agreements which accepts "paypal" as payment_method.
-// This will keep your plan compatible with both the possible scenarios on how it is being used in agreement.
-$merchantPreferences->setReturnUrl("$baseUrl/ExecuteAgreement.php?success=true")
-    ->setCancelUrl("$baseUrl/ExecuteAgreement.php?success=false")
-    ->setAutoBillAmount("yes")
-    ->setInitialFailAmountAction("CONTINUE")
-    ->setMaxFailAttempts("0")
-    ->setSetupFee(new Currency(array('value' => 1, 'currency' => 'USD')));
-
-
-$plan->setPaymentDefinitions(array($paymentDefinition));
-$plan->setMerchantPreferences($merchantPreferences);
-
-// For Sample Purposes Only.
-$request = clone $plan;
-
-
-///###########@@@@@@@@
-
-// ### Create Plan
-try {
-    $output = $plan->create($this->_apiContext);    
-    
-    print_r($output);
-    //return Redirect::to($request);
-} catch (Exception $ex) {
-    // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-    var_dump($ex);
-    exit(1);
-}
-            
             
 
+            $payer = new Payer();
+            $payer->setPaymentMethod("paypal");            
+            
+            //load items for the invoice
+            
+            $count_items = 0;
+            $items = [];
+            foreach ($items_invoice as $item_invoice) {
+                
+                
+                $items[$count_items] =  new Item();
+                $items[$count_items]->setName($item_invoice->item_description)
+                    ->setCurrency('USD')
+                    ->setQuantity(1)
+                    ->setSku($item_invoice->inv_item_id) // Similar to `item_number` in Classic API
+                    ->setPrice($item_invoice->item_total);
+                $count_items = $count_items + 1;
+            }
+          
+            //end items  
+                           
+                     
+            $itemList = new ItemList();
+            $itemList->setItems($items);
+
+            $details = new Details();
+            $details->setShipping(0) 
+               ->setTax(0)
+                ->setSubtotal($payment_db->amount);
+
+            $amount = new Amount();
+            $amount->setCurrency("USD")
+                ->setTotal($payment_db->amount)
+                ->setDetails($details);
+
+            $transaction = new Transaction();
+            $transaction->setAmount($amount)
+                ->setItemList($itemList)
+                ->setDescription("Computer Services")
+                ->setInvoiceNumber(uniqid());
+
+            //$baseUrl = url('/');
+            $redirectUrls = new RedirectUrls();
+            $redirectUrls->setReturnUrl(url("invoice/status"))
+                ->setCancelUrl(url("invoice/cancel"));
+
+            $payment = new Payment();
+            $payment->setIntent("sale")
+                ->setPayer($payer)
+                ->setRedirectUrls($redirectUrls)
+                ->setTransactions(array($transaction));
+
+            $request = clone $payment;
+
+            try {
+                $payment->create($this->_apiContext);
+            } catch (Exception $ex) {
+                //echo "Created Payment Using PayPal. Please visit the URL to Approve.", "Payment", null, $request, $ex;
+                return Redirect::to($request);
+            }
+            $approvalUrl = $payment->getApprovalLink();
+            echo "Created Payment Using PayPal. Please visit the URL to Approve.", "Payment", "<a href='$approvalUrl' >$approvalUrl</a>", $request, $payment;
+            //echo "HERE:::::::::: .".$payment->getId();
+            // add payment ID to session
+            $tmp_pmt_id = $payment->getId();   
+            Session::put('paypal_invoice_id', $tmp_pmt_id);
+            Session::put('paypal_dbinvoice_id', $payment_db->invoice_id);            
+            
+            /* return $payment; */
+            return Redirect::to($approvalUrl);
+            
             //end
             
         }        

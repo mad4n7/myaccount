@@ -175,7 +175,7 @@
 @section('content')
 
 <div class="col-sm-16 col-xs-12">
-    <form class="form form-horizontal" id="frmSend" method="POST" action="{{ url('/products/order') }}">
+    <form class="form form-horizontal" id="frmSend" method="POST" action="{{ url('/hosting/order') }}">
     {{ csrf_field() }}
     <input type="hidden" name="product_id" id="product_id" value="" />    
     <input type="hidden" name="product_periodicity" id="product_periodicity" value="" />            

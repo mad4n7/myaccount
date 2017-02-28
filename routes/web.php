@@ -21,9 +21,9 @@ Route::get('/order', function () {
 
 Auth::routes();
 
-Route::get('/products', 'PublicController@products');
-Route::get('/products/order', 'PublicController@order');
-Route::post('/products/order', 'PublicController@addOrder');
+Route::get('/hosting', 'PublicController@hosting');
+Route::get('/hosting/order', 'PublicController@order');
+Route::post('/hosting/order', 'PublicController@addOrder');
 
 Route::get('/home', 'HomeController@index');
 Route::get('safe/token/confirm/{token}', 'HelperController@confirmToken');

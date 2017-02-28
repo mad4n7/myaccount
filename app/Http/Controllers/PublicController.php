@@ -19,11 +19,11 @@ use App\User_detail;
 class PublicController extends Controller
 {
     
-    public function products()
+    public function hosting()
     {       
         $data['products'] = Product::all();        
         $data['page_title'] = 'Plans';
-        return view('orders.plans', $data);
+        return view('hosting.plans', $data);
     }
     
     public function order()
@@ -38,7 +38,7 @@ class PublicController extends Controller
         $data['selected_product'] = $selected_product;
         $data['products'] = Product::all();        
         $data['page_title'] = 'Pricing';
-        return view('orders.add', $data);
+        return view('hosting.add', $data);
     }
     
 

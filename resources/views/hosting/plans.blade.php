@@ -89,7 +89,7 @@
                     </ul>
                   </div>
                   <div class="pricing-footer">
-                      <a type="button" href="{{ url('products/order') }}?product={{ $product->product_id }}"
+                      <a type="button" href="{{ url('hosting/order') }}?product={{ $product->product_id }}"
                               class="btn btn-default btn-success btn_product" 
                               data-product-order="{{ $i }}" 
                               data-product-id="{{ $product->product_id }}"
