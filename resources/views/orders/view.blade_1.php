@@ -7,10 +7,6 @@
 <script>
     $(function() {      
         
-        <?php
-        $order->periodicity;
-        ?>
-        
     });    
     
     
@@ -125,98 +121,24 @@
             
         <?php if($invoice->inv_status != 'p') { ?>
         <div class="section">
-          <div class="section-title">Checkout</div>
+          <div class="section-title">Select a Payment Type</div>
           <div class="section-body">
- 
-           <!-- Payment methods -->     
-           <div class="form-group" id="small_m">
-              
-              <div class="col-md-6">
-                  
-                  
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-                  
-              </div>
-            </div>
-           
-           <div class="form-group hidden" id="small_y">
-              
-              <div class="col-md-6">
-                  small Y
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-                  
-              </div>
-            </div>
 
-           <div class="form-group hidden" id="medium_m">
+           <div class="form-group">
               <label class="col-md-3 control-label">PayPal</label>
               <div class="col-md-6">
-                  medium M
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-                  
+                  <a href="{{url("invoice/paypal/checkout")}}/{{ $invoice->invoice_id }}" title="Pay with PayPal">                      
+                    <img src="{{ asset('images/third_party/paypal_button.jpg') }}" title="Pay with PayPal" />
+                  </a>
+
+
+                <div id="domain_name_validate"></div>
               </div>
-            </div> 
-           
-           <div class="form-group hidden" id="medium_y">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  medium Y
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-              </div>
-            </div>  
-           
-           
-           <div class="form-group hidden" id="big_m">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  big M
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-              </div>
-            </div> 
-           
-           <div class="form-group hidden" id="big_y">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  big Y
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-              </div>
-            </div>           
-           
-           <!-- End Payment methods -->
+            </div>
             
           </div>
         </div>  
-            <div><p class="text-muted">* We are only processing payments through PayPal at this time. You'll be redirect to the PayPal website to complete checkout.</p></div>
+            <div><p class="text-muted">* We are only processing payments through PayPal at this time.</p></div>
         <?php } ?>  
         <!-- end total -->
             

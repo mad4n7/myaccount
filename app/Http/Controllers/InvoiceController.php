@@ -9,25 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
 
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\Item;
-use PayPal\Api\ItemList;
-use PayPal\Api\Payer;
-use PayPal\Api\Payment;
-use PayPal\Api\RedirectUrls;
-use PayPal\Api\Transaction;
-use PayPal\Api\PaymentExecution;
-use PayPal\Api\Agreement;
-use PayPal\Api\Plan;
-use PayPal\Api\ShippingAddress;
-use PayPal\Api\Patch;
-use PayPal\Api\PatchRequest;
-use PayPal\Common\PayPalModel;
-use PayPal\Api\ChargeModel;
-use PayPal\Api\Currency;
-use PayPal\Api\MerchantPreferences;
-use PayPal\Api\PaymentDefinition;
+
 
 use App\Product;
 use App\Invoice;
@@ -42,55 +24,24 @@ class InvoiceController extends Controller
 
 
 
-            $this->_apiContext = new \PayPal\Rest\ApiContext(
-                new \PayPal\Auth\OAuthTokenCredential(
-                    env('PAYPAL_CLIENT_ID'),     // ClientID
-                    env('PAYPAL_SECRET')      // ClientSecret
-                )
-            );
-
-            /* LOG levels
-             * 
-             * Sandbox Mode
-                DEBUG, INFO, WARN, ERROR.
-                Please note that, DEBUG is only allowed in sandbox mode. It will throw a warning, and reduce the level to INFO if set in live mode.
-                Live Mode
-                INFO, WARN, ERROR
-                DEBUG mode is not allowed in live environment. It will throw a warning, and reduce the level to INFO if set in live mode.
-             */    
-
-            
-            $this->_apiContext->setConfig(
-                array(
-                    'mode' => 'sandbox',
-                    'log.LogEnabled' => true,
-                    'log.FileName' => storage_path('paypal.log'),
-                    'http.ConnectionTimeOut' => 30,
-                    'log.LogLevel' => 'DEBUG', // PLEASE USE FINE LEVEL FOR LOGGING IN LIVE ENVIRONMENTS
-                    'cache.enabled' => true,
-                    // 'http.CURLOPT_CONNECTTIMEOUT' => 30
-                    // 'http.headers.PayPal-Partner-Attribution-Id' => '123123123'
-                )
-            );
-             
-
-            /*
-            $this->_apiContext->setConfig(
-                array(
-                    'mode' => 'live',
-                    'log.LogEnabled' => true,
-                    'log.FileName' => storage_path('paypal.log'),
-                    'log.LogLevel' => 'DEBUG',
-                    'validation.level' => 'log',
-                    'cache.enabled' => true,
-                )
-            );
-            */
-
     }    
     
     
  
+        public function clientShowStripeCheckout($id)
+        {
+            \Stripe\Stripe::setApiKey("sk_test_xhdhj9uJZ1xqhc3h8gIavlxs");
+
+            $plan = \Stripe\Plan::create(array(
+              "name" => "Basic Plan",
+              "id" => "basic-monthly",
+              "interval" => "month",
+              "currency" => "usd",
+              "amount" => 0,
+            ));
+            
+        }
+                
         /**
          * Redirects a user to PayPal
          * The instance of this Payment is into the "_constructor"
@@ -110,69 +61,76 @@ class InvoiceController extends Controller
             $items_invoice = Invoice::find($payment_db->invoice_id)->invoice_itens;
                         
 
-// Create a new instance of Plan object
-$plan = new Plan();
+            $payer = new Payer();
+            $payer->setPaymentMethod("paypal");            
+            
+            //load items for the invoice
+            
+            $count_items = 0;
+            $items = [];
+            foreach ($items_invoice as $item_invoice) {
+                
+                
+                $items[$count_items] =  new Item();
+                $items[$count_items]->setName($item_invoice->item_description)
+                    ->setCurrency('USD')
+                    ->setQuantity(1)
+                    ->setSku($item_invoice->inv_item_id) // Similar to `item_number` in Classic API
+                    ->setPrice($item_invoice->item_total);
+                $count_items = $count_items + 1;
+            }
+          
+            //end items  
+                           
+                     
+            $itemList = new ItemList();
+            $itemList->setItems($items);
 
-// # Basic Information
-// Fill up the basic information that is required for the plan
-$plan->setName('T-Shirt of the Month Club Plan')
-    ->setDescription('Template creation.')
-    ->setType('fixed');
+            $details = new Details();
+            $details->setShipping(0) 
+               ->setTax(0)
+                ->setSubtotal($payment_db->amount);
 
-// # Payment definitions for this billing plan.
-$paymentDefinition = new PaymentDefinition();
+            $amount = new Amount();
+            $amount->setCurrency("USD")
+                ->setTotal($payment_db->amount)
+                ->setDetails($details);
 
-// The possible values for such setters are mentioned in the setter method documentation.
-// Just open the class file. e.g. lib/PayPal/Api/PaymentDefinition.php and look for setFrequency method.
-// You should be able to see the acceptable values in the comments.
-$paymentDefinition->setName('Regular Payments')
-    ->setType('REGULAR')
-    ->setFrequency('Month')
-    ->setFrequencyInterval("2")
-    ->setCycles("12")
-    ->setAmount(new Currency(array('value' => 153.49, 'currency' => 'USD'))); // plan price
+            $transaction = new Transaction();
+            $transaction->setAmount($amount)
+                ->setItemList($itemList)
+                ->setDescription("Computer Services")
+                ->setInvoiceNumber(uniqid());
 
-// Charge Models
-/*
-$chargeModel = new ChargeModel();
-$chargeModel->setType('SHIPPING')
-    ->setAmount(new Currency(array('value' => 10, 'currency' => 'USD')));
+            //$baseUrl = url('/');
+            $redirectUrls = new RedirectUrls();
+            $redirectUrls->setReturnUrl(url("invoice/status"))
+                ->setCancelUrl(url("invoice/cancel"));
 
-$paymentDefinition->setChargeModels(array($chargeModel));
-*/
-$merchantPreferences = new MerchantPreferences();
-$baseUrl = url('/');
-// ReturnURL and CancelURL are not required and used when creating billing agreement with payment_method as "credit_card".
-// However, it is generally a good idea to set these values, in case you plan to create billing agreements which accepts "paypal" as payment_method.
-// This will keep your plan compatible with both the possible scenarios on how it is being used in agreement.
-$merchantPreferences->setReturnUrl("$baseUrl/ExecuteAgreement.php?success=true")
-    ->setCancelUrl("$baseUrl/ExecuteAgreement.php?success=false")
-    ->setAutoBillAmount("yes")
-    ->setInitialFailAmountAction("CONTINUE")
-    ->setMaxFailAttempts("0")
-    ->setSetupFee(new Currency(array('value' => 1, 'currency' => 'USD')));
+            $payment = new Payment();
+            $payment->setIntent("sale")
+                ->setPayer($payer)
+                ->setRedirectUrls($redirectUrls)
+                ->setTransactions(array($transaction));
 
+            $request = clone $payment;
 
-$plan->setPaymentDefinitions(array($paymentDefinition));
-$plan->setMerchantPreferences($merchantPreferences);
-
-// For Sample Purposes Only.
-$request = clone $plan;
-
-
-///###########@@@@@@@@
-
-// ### Create Plan
-try {
-    $output = $plan->create($this->_apiContext);    
-    
-    print_r($output);
-    //return Redirect::to($request);
-} catch (Exception $ex) {
-    // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-    var_dump($ex);
-    exit(1);
-}
+            try {
+                $payment->create($this->_apiContext);
+            } catch (Exception $ex) {
+                //echo "Created Payment Using PayPal. Please visit the URL to Approve.", "Payment", null, $request, $ex;
+                return Redirect::to($request);
+            }
+            $approvalUrl = $payment->getApprovalLink();
+            echo "Created Payment Using PayPal. Please visit the URL to Approve.", "Payment", "<a href='$approvalUrl' >$approvalUrl</a>", $request, $payment;
+            //echo "HERE:::::::::: .".$payment->getId();
+            // add payment ID to session
+            $tmp_pmt_id = $payment->getId();   
+            Session::put('paypal_invoice_id', $tmp_pmt_id);
+            Session::put('paypal_dbinvoice_id', $payment_db->invoice_id);            
+            
+            /* return $payment; */
+            return Redirect::to($approvalUrl);
             
             
 
