@@ -22,7 +22,7 @@ use PayPal\Api\PaymentExecution;
 use App\Product;
 use App\Invoice;
 
-class InvoiceController extends Controller
+class InvoiceController_bkp extends Controller
 {
     private $_apiContext;
     

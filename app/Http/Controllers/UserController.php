@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use App\User;
 use App\User_detail;
 use App\Country;
+use App\UsState;
 
 class UserController extends Controller
 {
@@ -47,6 +48,7 @@ class UserController extends Controller
         $data['user'] = User::find(Auth::user()->id);
         $data['user_details'] = User::find(Auth::user()->id)->details;
         $data['countries'] = Country::all();
+        $data['us_states'] = UsState::all();
         
         $data['page_title'] = 'Profile';  
         //return view('home', $data);
@@ -82,6 +84,7 @@ class UserController extends Controller
         $user_details->city = $request->input('city');
         $user_details->zip_code = $request->input('zip_code');
         $user_details->country_code = $request->input('country');
+        $user_details->us_state_code = $request->input('us_state_code');
         $user_details->company = $request->input('company');
         $user_details->save();
         

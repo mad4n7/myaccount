@@ -32,7 +32,7 @@ class HomeController extends Controller
         $data['page_title'] = 'Dashboard';
         $data['products'] = Product::all();    
         //return view('home', $data);
-        return view('orders.add', $data);
+        return view('home', $data);
     }
 
 }

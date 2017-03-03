@@ -11,13 +11,19 @@
         $order->periodicity;
         ?>
         
+
+        
     });    
+  
     
     
 </script>
+
+    
 @endsection
 
 @section('content')
+
 
 <div class="col-sm-16 col-xs-12">
     <div class="form form-horizontal" id="frmSend">
@@ -133,84 +139,8 @@
               
               <div class="col-md-6">
                   
-                  
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-                  
               </div>
             </div>
-           
-           <div class="form-group hidden" id="small_y">
-              
-              <div class="col-md-6">
-                  small Y
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-                  
-              </div>
-            </div>
-
-           <div class="form-group hidden" id="medium_m">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  medium M
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-                  
-              </div>
-            </div> 
-           
-           <div class="form-group hidden" id="medium_y">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  medium Y
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-              </div>
-            </div>  
-           
-           
-           <div class="form-group hidden" id="big_m">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  big M
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-              </div>
-            </div> 
-           
-           <div class="form-group hidden" id="big_y">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  big Y
-                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="hosted_button_id" value="MNDSY565SEC64">
-                <input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
-              </div>
-            </div>           
            
            <!-- End Payment methods -->
             

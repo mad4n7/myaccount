@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
 
 
-
+use App\User;
 use App\Product;
 use App\Invoice;
 
@@ -26,21 +26,6 @@ class InvoiceController extends Controller
 
     }    
     
-    
- 
-        public function clientShowStripeCheckout($id)
-        {
-            \Stripe\Stripe::setApiKey("sk_test_xhdhj9uJZ1xqhc3h8gIavlxs");
-
-            $plan = \Stripe\Plan::create(array(
-              "name" => "Basic Plan",
-              "id" => "basic-monthly",
-              "interval" => "month",
-              "currency" => "usd",
-              "amount" => 0,
-            ));
-            
-        }
                 
         /**
          * Redirects a user to PayPal

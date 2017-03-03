@@ -6,15 +6,18 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Cashier\Billable;
 
 use App\Product;
 use App\Order;
 use App\Invoice;
 use App\Invoices_item;
+use App\User;
 
 
 class OrderController extends Controller
 {
+   
     
     public function __construct()
     {
@@ -45,11 +48,13 @@ class OrderController extends Controller
         else {
             $selected_product = "";
         }
-            
+        $data['countries'] = Country::all();
+        $data['us_states'] = UsState::all();
+        
         $data['selected_product'] = $selected_product;
         $data['products'] = Product::all();        
         $data['page_title'] = 'Pricing';
-        return view('orders.add', $data);
+        return view('hosting.add', $data);
     }
 
     /**
@@ -72,12 +77,16 @@ class OrderController extends Controller
     public function show($id)
     {
         
+
         //validate an accesss
         if( Order::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
         {
             Session::flash('msg_error', 'Sorry, the invoice that you are trying to access does not belong to you.');
             return redirect('/home');
-        }   
+        }           
+        $user = User::find(Auth::user()->id);        
+        
+        $data['pk_stripe'] = config('services.stripe.key');        
         
         $data['order_itens'] = Invoices_item::where('order_id', $id)->get();
         $data['invoice'] = Invoice::where('order_id', $id)->first();

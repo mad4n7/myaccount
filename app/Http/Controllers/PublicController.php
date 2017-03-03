@@ -15,6 +15,8 @@ use App\Invoice;
 use App\Invoices_item;
 use App\User;
 use App\User_detail;
+use App\Country;
+use App\UsState;
 
 class PublicController extends Controller
 {
@@ -35,6 +37,9 @@ class PublicController extends Controller
             $selected_product = "";
         }
             
+        $data['countries'] = Country::all();
+        $data['us_states'] = UsState::all();
+        
         $data['selected_product'] = $selected_product;
         $data['products'] = Product::all();        
         $data['page_title'] = 'Pricing';
@@ -62,17 +67,43 @@ class PublicController extends Controller
                 $selected_product = Product::find(Request::input('product_id'));
                 if(Request::input('product_periodicity') == 'month'){
                     $total_itens = $total_itens + $selected_product->price_month;
+                    $prod_code_now = $selected_product->prod_code_monthly;
                 }else {
                     $total_itens = $total_itens + $selected_product->price_year;
+                    $prod_code_now = $selected_product->prod_code_yearly;
                 }                
                 
                 
                 $user = new User;
                 $user->name = Request::input('name');
                 $user->email = Request::input('email');
-                $user->password = bcrypt(Request::input('password'));
+                $user->password = bcrypt(Request::input('password'));                
                 $user->save();
                 
+                //save the stripe ID
+                $user_update = User::find($user->id);
+                $stripe_user = StripeController::createUser($user->id);
+                $user_update->stripe_id = $stripe_user->id;   
+                $user_update->save();
+                
+                //create a credit cart token
+                
+                $extra_options = array(
+                    "address_city" => Request::input('city'),
+                    "address_state" => Request::input('us_state_code'),
+                    "address_country" => Request::input('country'),
+                    "address_line1" => Request::input('address'),            
+                    "address_zip" => Request::input('zip_code'));
+                
+                StripeController::createCard($stripe_user->id, 
+                        $user->id, Request::input('cc_name'),
+                        Request::input('cc_number'), 
+                        Request::input('cc_ex_month'), 
+                        Request::input('cc_ex_year'), Request::input('cc_ccv'),
+                        $extra_options);
+             
+                // do subscription
+                $subscription = StripeController::subscribeToAPlan(Auth::user()->id, $prod_code_now);
                 
                 //create user details
                 $generated_token = md5( date('mdYhis').'user_email'.$user->email );
@@ -82,18 +113,7 @@ class PublicController extends Controller
                 $user_detail->activated = 0;
                 $user_detail->save();
 
-                //send e-mail
-                $data_email = [                    
-                    "user" => $user,
-                    "email" => $user->email,
-                    "name" => $user->name,
-                    "token" => $generated_token
-                ];
-                //send email
-                Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
-                {
-                    $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
-                });         
+        
 
                 Auth::login($user);
                 
@@ -103,6 +123,7 @@ class PublicController extends Controller
                 $order_plan->product_id = Request::input('product_id');
                 $order_plan->domain_name = Request::input('domain_name');
                 $order_plan->periodicity = Request::input('product_periodicity');                
+                $order_plan->stripe_subscription_id = $subscription->id;                
                 $order_plan->save();                                                
                 
                 $invoice_1 = new Invoice;
@@ -143,6 +164,18 @@ class PublicController extends Controller
                     $invoice_item_migrate->save();                     
                 }                
                 
+                //send e-mail
+                $data_email = [                    
+                    "user" => $user,
+                    "email" => $user->email,
+                    "name" => $user->name,
+                    "token" => $generated_token
+                ];
+                //send email
+                Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
+                {
+                    $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
+                });                 
                 
                 return redirect('/orders/'.$order_plan->order_id);          
                 

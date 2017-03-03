@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\User_detail;
+use App\Http\Controllers\StripeController;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -70,6 +72,13 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
         ]);
         
+        
+        //save the stripe ID
+        $user_update = User::find($user->id);        
+        $stripe_user = StripeController::createUser($user->id);
+        $user_update->stripe_id = $stripe_user->id;   
+        $user_update->save();
+
         //create user details
         $generated_token = md5( date('mdYhis').'user_email'.$user->email );
         $user_detail = new User_detail;

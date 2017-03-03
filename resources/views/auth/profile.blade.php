@@ -128,6 +128,26 @@ $(function() {
                     </div>
                     
                     <div class="form-group">
+                       <label for="country">State</label>
+                       <select class="form-control" name="us_state_code" id="us_state_code">
+                           <option>Select...</option>
+                        <?php foreach ($us_states as $us_state){ 
+                           
+                            if($user_details->us_state_code == $us_state->us_state_code ){
+                                $selected = 'selected';
+                            }
+                            else { 
+                                $selected = '';                                 
+                            } 
+                            ?>
+                           <option value="{{ $us_state->code }}" {{ $selected }} >{{ $us_state->name }}</option>
+                        <?php } ?>
+                        
+                      </select>
+                       <div class="text-danger" id="country_validate"></div>
+                   </div>                    
+                    
+                    <div class="form-group">
                        <label for="country">Country</label>
                        <select class="form-control" name="country" id="country">
                         <?php foreach ($countries as $country){ 
@@ -146,7 +166,8 @@ $(function() {
                         
                       </select>
                        <div class="text-danger" id="country_validate"></div>
-                   </div>                      
+                   </div> 
+                    
                     <br />
                     <div class="form-group">
                        <label for="company">Company</label>

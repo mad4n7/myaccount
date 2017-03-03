@@ -2,10 +2,21 @@
 
 @section('header_tags')
 <script src="{{ asset('js/plugins/jquery.validate.min.js') }}"></script>
+<script src="{{ asset('js/plugins/jquery.creditCardValidator.js') }}"></script>
 
 
 <script>
     $(function() {               
+        
+        /* tooltips */
+        var tooltips = $( "[title]" ).tooltip({
+          position: {
+            my: "left top",
+            at: "right+5 top-5",
+            collision: "none"
+          }
+        });        
+        /* tooltips */
         
         $("#term-length").hide();
         
@@ -18,6 +29,7 @@
         
         /* Form validation */
         $("#frmSend").validate({
+                focusInvalid: true,
                 rules: {
                     
                         <?php if (!Auth::check()) {  ?>  
@@ -27,6 +39,32 @@
                         password_confirmation: {
                           equalTo: "#password"
                         },
+                        cc_name: "required",
+                        cc_cvv:  {
+                            required: true,
+                            number: true
+                        },
+                        cc_ex_year: {
+                            required: true,
+                            number: true
+                        },
+                        cc_ex_month: {
+                            required: true,
+                            number: true
+                        },
+                        cc_number: {
+                            required: true,
+                            number: true
+                        },
+                        phone_number: "required",
+                        address: "required",
+                        city: "required",
+                        zip_code: {
+                            required: true,
+                            number: true
+                        },
+                        us_state_code: "required",
+                                
                         <?php } ?>
                     
                         domain_name: "required",
@@ -110,6 +148,33 @@
 
         /* end plan renews */        
         
+        
+        /* cc flag */
+        $('#cc_number').validateCreditCard(function(result) {
+            $('.log').html('Card type: ' + (result.card_type == null ? '-' : result.card_type.name)
+                     + '<br>Valid: ' + result.valid
+                     + '<br>Length valid: ' + result.length_valid
+                     + '<br>Luhn valid: ' + result.luhn_valid);
+             if(result.card_type == null){
+                $('#creditcard_flag').replaceWith('<div id="creditcard_flag"><img src="<?php echo asset('images/payments/no-card.png'); ?>"  style="height: 48px; opacity: .3;"  class="img-rounded" /></div>')
+             }
+             else if(result.card_type.name == 'visa' || result.card_type.name == 'visa_electron') {
+                 $('#creditcard_flag').replaceWith('<div id="creditcard_flag"><img src="<?php echo asset('images/payments/icon-visa-64px.png'); ?>"  style="height: 48px; "  class="img-rounded" /></div>')
+             }
+             else if(result.card_type.name == 'amex') {
+                 $('#creditcard_flag').replaceWith('<div id="creditcard_flag"><img src="<?php echo asset('images/payments/icon-amex-64px.png'); ?>"  style="height: 48px; "  class="img-rounded" /></div>')
+             }   
+             else if(result.card_type.name == 'mastercard' || result.card_type.name == 'maestro' ) {
+                 $('#creditcard_flag').replaceWith('<div id="creditcard_flag"><img src="<?php echo asset('images/payments/icon-mastercard-64px.png'); ?>"  style="height: 48px; "  class="img-rounded" /></div>')
+             }             
+             else {
+                $('#creditcard_flag').replaceWith('<div id="creditcard_flag"><img src="<?php echo asset('images/payments/other-card.png'); ?>"  style="height: 48px; opacity: .3;"  class="img-rounded" /></div>')
+             }             
+             console.log(result.card_type.name);
+        });        
+        /* cc flag */
+        
+        
     });    
     
     
@@ -170,6 +235,20 @@
     }
     
 </script>
+<style>
+.credit-card-div  span {
+    padding-top:10px;
+        }
+.credit-card-div img {
+    padding-top:30px;
+}
+.credit-card-div .small-font {
+    font-size:9px;
+}
+.credit-card-div .pad-adjust {
+    padding-top:10px;
+}
+</style>
 @endsection
 
 @section('content')
@@ -191,7 +270,7 @@
                         <div class="section-body">
                           <div class="step">
                 <ul class="nav nav-tabs nav-justified" role="tablist">
-                    <li role="step" class="active">
+                    <li role="step">
                         <a href="#step1" role="tab" id="step1-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-check"></div>
                             <div class="heading">
@@ -200,7 +279,7 @@
                             </div>
                         </a>
                     </li>                    
-                    <li role="step">
+                    <li role="step" class="active">
                         <a href="#step2" role="tab" id="step2-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-credit-card"></div>
                             <div class="heading">
@@ -302,12 +381,17 @@
           </div>
         </div> 
             
-        <?php if (!Auth::check()) {  ?>    
-        <!-- billing -->    
+        <?php
+        // dont show if is authenticated
+        if (!Auth::check()) {  ?>    
+        <!-- billing -->  
+        
         <div class="panel panel-success">
             <div class="panel-heading lead">Enter Your Billing Information</div>
-          <div class="panel-body">
-
+          <div class="panel-body">        
+        <div class="row">
+            <!-- section 1 -->
+            <div class="col-md-6">
                 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                     <label for="name" class="col-md-4 control-label">Full Name</label>
 
@@ -342,6 +426,137 @@
                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                     </div>
                 </div>
+                
+
+                    <div class="form-group">
+                       <label for="phone_number" class="col-md-4 control-label">Phone Number</label>
+                       <div class="col-md-6">
+                            <input type="text" class="form-control" name="phone_number" id="phone_number" placeholder="Phone number" value="">
+                            <div class="text-danger" id="phone_number_validate"></div>
+                       </div>                       
+                   </div>   
+                    
+                    <div class="form-group">
+                       <label for="address" class="col-md-4 control-label">Address</label>
+                       <div class="col-md-6">
+                            <input type="text" class="form-control" name="address" id="address" placeholder="Address" value="">
+                            <div class="text-danger" id="address_validate"></div>
+                       </div>                       
+                   </div>       
+                
+                    <div  class="form-group">
+                        <label for="city" class="col-md-4 control-label">City</label>
+                           <div class="col-md-6">
+                                <input type="text" class="form-control" name="city" id="city" placeholder="e.g. Los Angeles" value="">
+                                <div class="text-danger" id="city_validate"></div>
+                           </div>                           
+                    </div>
+                       
+                       <div  class="form-group">
+                           <label for="zip_code" class="col-md-4 control-label">Zip Code</label>                               
+                               <div class="col-md-6">
+                                    <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zip Code" value="">
+                                    <div class="text-danger" id="zip_code_validate"></div> 
+                               </div>                                                           
+                        </div>                         
+                    
+                    
+                    <div class="form-group">
+                       <label for="country" class="col-md-4 control-label">State</label>
+                       <div class="col-md-6">
+                            <select class="form-control" name="us_state_code" id="us_state_code">
+                                <option>Select...</option>
+                             <?php foreach ($us_states as $us_state){?>
+                                <option value="{{ $us_state->name }}">{{ $us_state->name }}</option>
+                             <?php } ?>
+                            </select>
+                           <div class="text-danger" id="us_state_code_validate"></div>
+                       </div>                       
+                   </div>                    
+                    <br />
+                    <div class="form-group">
+                       <label for="country" class="col-md-4 control-label">Country</label>
+                       <div class="col-md-6">
+                            <select class="form-control" name="country" id="country">
+                             <?php foreach ($countries as $country){
+                                    if($country->country_code == 'US' ){
+                                        $selected = 'selected';
+                                    }
+                                    else { 
+                                        $selected = '';                                 
+                                    }                                  
+                                 ?>
+                                <option value="{{ $country->country_code }}" {{ $selected }} >{{ $country->country_name }}</option>
+                             <?php } ?>                        
+                             </select>
+                           <div class="text-danger" id="country_validate"></div>
+                       </div>                       
+                   </div> 
+                    
+                
+            </div>
+            <!-- / section 1 -->
+            
+            <!-- section 2 -->
+            <div class="col-md-6">
+                <div class="panel panel-success">
+                    <div class="panel-heading lead">Credit Card</div>
+                    <div class="panel-body">
+                        
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <h5 class="text-muted"> Credit Card Number</h5>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <input type="text" class="form-control" 
+                                       name="cc_number" id="cc_number" 
+                                       placeholder="" />
+                                <div class="text-danger" id="cc_number_validate"></div>
+                            </div>
+                            
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <span class="help-block text-muted small-font"> Expiry Month</span>
+                                <input type="text" class="form-control" 
+                                       name="cc_ex_month" id="cc_ex_month" 
+                                       placeholder="MM" />
+                                <div class="text-danger" id="cc_ex_month_validate"></div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <span class="help-block text-muted small-font">  Expiry Year</span>
+                                <input type="text" class="form-control" 
+                                       name="cc_ex_year" id="cc_ex_year" 
+                                       placeholder="YY" />
+                                <div class="text-danger" id="cc_ex_year_validate"></div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <span class="help-block text-muted small-font">  Security Code</span>
+                                <input type="text" class="form-control" 
+                                       name="cc_cvv" id="cc_ccv" 
+                                       placeholder="CVV"  />
+                                <div class="text-danger" id="cc_cvv_validate"></div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div id="creditcard_flag"></div>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-12 pad-adjust">
+
+                                <input type="text" class="form-control" 
+                                       name="cc_name" id="cc_name" 
+                                       placeholder="Name On The Card" />
+                                <div class="text-danger" id="cc_name_validate"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>            
+            <!-- / section 2 -->
+        </div>
+   
           </div>
         </div>             
         <!-- end billing -->    
