@@ -23,7 +23,7 @@ class PublicController extends Controller
     
     public function hosting()
     {       
-        $data['products'] = Product::all();        
+        $data['products'] = Product::getAllHosting();       
         $data['page_title'] = 'Plans';
         return view('hosting.plans', $data);
     }
@@ -41,7 +41,7 @@ class PublicController extends Controller
         $data['us_states'] = UsState::all();
         
         $data['selected_product'] = $selected_product;
-        $data['products'] = Product::all();        
+        $data['products'] = Product::getAllHosting();        
         $data['page_title'] = 'Pricing';
         return view('hosting.add', $data);
     }
@@ -65,7 +65,7 @@ class PublicController extends Controller
                     $total_itens = $total_itens + 60;
                 }                               
                 $selected_product = Product::find(Request::input('product_id'));
-                if(Request::input('product_periodicity') == 'month'){
+                if(Request::input('product_periodicity') == 'monthly'){
                     $total_itens = $total_itens + $selected_product->price_month;
                     $prod_code_now = $selected_product->prod_code_monthly;
                 }else {
@@ -73,50 +73,61 @@ class PublicController extends Controller
                     $prod_code_now = $selected_product->prod_code_yearly;
                 }                
                 
+                // not authenticated
+                if (!Auth::check()) {
+                    $user = new User;
+                    $user->name = Request::input('name');
+                    $user->email = Request::input('email');
+                    $user->password = bcrypt(Request::input('password'));                
+                    $user->save();
+
+                    //save the stripe ID
+                    $user_update = User::find($user->id);
+                    $stripe_user = StripeController::createUser($user->id);
+                    $user_update->stripe_id = $stripe_user->id;   
+                    $user_update->save();
+
+                    //create a credit cart token
+
+                    $extra_options = array(
+                        "address_city" => Request::input('city'),
+                        "address_state" => Request::input('us_state_code'),
+                        "address_country" => Request::input('country'),
+                        "address_line1" => Request::input('address'),            
+                        "address_zip" => Request::input('zip_code'));
+
+                    StripeController::createCard($stripe_user->id, 
+                            $user->id, Request::input('cc_name'),
+                            Request::input('cc_number'), 
+                            Request::input('cc_ex_month'), 
+                            Request::input('cc_ex_year'), Request::input('cc_ccv'),
+                            $extra_options);
+
+
+                    //create user details
+                    $generated_token = md5( date('mdYhis').'user_email'.$user->email );
+                    $user_detail = new User_detail;
+                    $user_detail->user_id = $user->id;
+                    $user_detail->activation_token = $generated_token;
+                    $user_detail->activated = 0;
+                    $user_detail->phone_number = Request::input('phone_number');
+                    $user_detail->address = Request::input('address');
+                    $user_detail->city = Request::input('city');
+                    $user_detail->zip_code = Request::input('zip_code');
+                    $user_detail->country_code = Request::input('country');
+                    $user_detail->us_state_code = Request::input('us_state_code');
+                    $user_detail->save();
+
+                    Auth::login($user);
                 
-                $user = new User;
-                $user->name = Request::input('name');
-                $user->email = Request::input('email');
-                $user->password = bcrypt(Request::input('password'));                
-                $user->save();
+                }
+                //end not authenticated
+
                 
-                //save the stripe ID
-                $user_update = User::find($user->id);
-                $stripe_user = StripeController::createUser($user->id);
-                $user_update->stripe_id = $stripe_user->id;   
-                $user_update->save();
                 
-                //create a credit cart token
-                
-                $extra_options = array(
-                    "address_city" => Request::input('city'),
-                    "address_state" => Request::input('us_state_code'),
-                    "address_country" => Request::input('country'),
-                    "address_line1" => Request::input('address'),            
-                    "address_zip" => Request::input('zip_code'));
-                
-                StripeController::createCard($stripe_user->id, 
-                        $user->id, Request::input('cc_name'),
-                        Request::input('cc_number'), 
-                        Request::input('cc_ex_month'), 
-                        Request::input('cc_ex_year'), Request::input('cc_ccv'),
-                        $extra_options);
-             
                 // do subscription
                 $subscription = StripeController::subscribeToAPlan(Auth::user()->id, $prod_code_now);
-                
-                //create user details
-                $generated_token = md5( date('mdYhis').'user_email'.$user->email );
-                $user_detail = new User_detail;
-                $user_detail->user_id = $user->id;
-                $user_detail->activation_token = $generated_token;
-                $user_detail->activated = 0;
-                $user_detail->save();
-
-        
-
-                Auth::login($user);
-                
+                                
                 //add orders
                 $order_plan = new Order;
                 $order_plan->user_id = Auth::user()->id;
@@ -128,40 +139,90 @@ class PublicController extends Controller
                 
                 $invoice_1 = new Invoice;
                 $invoice_1->user_id = Auth::user()->id;
-                $invoice_1->order_id = $order_plan->order_id;
-                $invoice_1->amount = $total_itens;
+                $invoice_1->order_id = $order_plan->order_id;                
                 $invoice_1->inv_status = 'u';
-                $invoice_1->save();
+                $invoice_1->plan_id = $prod_code_now;
                 
-                $invoice_item_1 = new Invoices_item;
-                $invoice_item_1->invoice_id = $invoice_1->invoice_id;;
-                $invoice_item_1->order_id = $order_plan->order_id;
-                $invoice_item_1->item_description = $selected_product->prod_name;
-                
-                if(Request::input('product_periodicity') == 'month'){
-                    $invoice_item_1->item_total = $selected_product->price_month;
+                if(Request::input('product_periodicity') == 'monthly'){                    
+                    $invoice_1->amount = $selected_product->price_month;
                 }else {
-                    $invoice_item_1->item_total = $selected_product->price_year;
+                    $invoice_1->amount = $selected_product->price_year;
                 }
-                $invoice_item_1->save();
+                $invoice_1->inv_description = $selected_product->prod_name;
+                $invoice_1->save();
                 
                 
                 //check extra items
                 if(Request::has('ckb_add_ssl')){
-                    $invoice_item_parent = new Invoices_item;
-                    $invoice_item_parent->invoice_id = $invoice_1->invoice_id;;
-                    $invoice_item_parent->order_id = $order_plan->order_id;
-                    $invoice_item_parent->item_description = '1 year of SSL Certificate';
-                    $invoice_item_parent->item_total = Request::input('ckb_add_ssl');
-                    $invoice_item_parent->save();                     
+                    
+                   
+                    $subscription2 = StripeController::subscribeToAPlan(Auth::user()->id,
+                            'domain-ssl-certificate');
+                    
+                    $order_plan = new Order;
+                    $order_plan->user_id = Auth::user()->id;
+                    $order_plan->product_id = 4;
+                    $order_plan->domain_name = Request::input('domain_name');
+                    $order_plan->periodicity = 'anually';                
+                    $order_plan->stripe_subscription_id = $subscription2->id;                
+                    $order_plan->save();   
+                
+                    $invoice_1 = new Invoice;
+                    $invoice_1->user_id = Auth::user()->id;
+                    $invoice_1->order_id = $order_plan->order_id;
+                    $invoice_1->inv_status = 'u';
+                    $invoice_1->amount = Request::input('ckb_add_ssl');                    
+                    $invoice_1->inv_description = '1 year of SSL Certificate';
+                    $invoice_1->save();
+
+                    
                 }
+                
+                if(Request::has('ckb_add_backuppro')){
+                    
+                   
+                    $subscription3 = StripeController::subscribeToAPlan(Auth::user()->id,
+                            'files-backuppro-yearly');
+                    
+                    $order_plan = new Order;
+                    $order_plan->user_id = Auth::user()->id;
+                    $order_plan->product_id = 5;
+                    $order_plan->domain_name = Request::input('domain_name');
+                    $order_plan->periodicity = 'anually';                
+                    $order_plan->stripe_subscription_id = $subscription3->id;                
+                    $order_plan->save();   
+                
+                    $invoice_1 = new Invoice;
+                    $invoice_1->user_id = Auth::user()->id;
+                    $invoice_1->order_id = $order_plan->order_id;
+                    $invoice_1->inv_status = 'u';
+                    $invoice_1->amount = Request::input('ckb_add_backuppro');                    
+                    $invoice_1->inv_description = '1 year of SSL Certificate';
+                    $invoice_1->save();
+
+                    
+                }                
+                
                 if(Request::has('ckb_add_migrate')){
-                    $invoice_item_migrate = new Invoices_item;
-                    $invoice_item_migrate->invoice_id = $invoice_1->invoice_id;;
-                    $invoice_item_migrate->order_id = $order_plan->order_id;
-                    $invoice_item_migrate->item_description = 'Website migration (up to 3)';
-                    $invoice_item_migrate->item_total = Request::input('ckb_add_migrate');
-                    $invoice_item_migrate->save();                     
+          
+                    // add subitem
+                    $user_db = User::find(Auth::user()->id);
+
+                    
+                    $invoice_1 = new Invoice;
+                    $invoice_1->user_id = Auth::user()->id;
+                    $invoice_1->order_id = $order_plan->order_id;
+                    $invoice_1->inv_status = 'u';
+                    $invoice_1->stripe_si_id = null;
+                    $invoice_1->plan_id = null;
+                    $invoice_1->amount = Request::input('ckb_add_migrate');                    
+                    $invoice_1->inv_description = 'Website migration (up to 3)';
+                    $invoice_1->save();        
+                    
+                    // Charge it separated
+                    StripeController::createCharge(6000, 'usd', $user_db->stripe_id, $invoice_1->inv_description);                    
+                    
+
                 }                
                 
                 //send e-mail

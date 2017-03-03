@@ -133,6 +133,27 @@ class StripeController extends Controller
         return $customer;
     }  
     
+    /**
+     * createCharge(17400 = $174.00, 'usd', 'cus_SDSJDKS28h', 'invoice XYZ')
+     * @param type $amount
+     * @param type $currency
+     * @param type $customer_id
+     * @param type $description
+     * @return type
+     */
+    public static function createCharge($amount, $currency, $customer_id, $description)
+    {
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+        $r = \Stripe\Charge::create(array(
+          "amount" => $amount,
+          "currency" => $currency,
+          "customer" => $customer_id, // obtained with Stripe.js
+          "description" => $description
+        )); 
+        return $r;
+    }
+    
     public static function addItemToaSubscription($sub_id, $plan_id, $quantity)
     {
         

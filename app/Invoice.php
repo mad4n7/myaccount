@@ -11,11 +11,10 @@ class Invoice extends Model
 protected $table = 'invoices';
 protected $primaryKey = 'invoice_id';
 
-  public function invoice_itens()
+  public function order()
   {
-      return $this->hasMany('App\Invoices_item', 'invoice_id');
-  }     
-    
+      return $this->belongsTo('App\Order');    
+  } 
   /**
    * Check if is the owner
    * @param type $id

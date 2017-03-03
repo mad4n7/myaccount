@@ -16,6 +16,11 @@ class Order extends Model
       return $this->belongsTo('App\User');    
     }     
 
+  public function invoices()
+  {
+      return $this->hasMany('App\Invoice', 'order_id');
+  }     
+        
     
     public static function checkClientOwner($id, $user_id)
     {

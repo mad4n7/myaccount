@@ -132,6 +132,7 @@
             }
         });
         
+        /* SSL */
         $( "#ckb_add_ssl" ).change(function() {
             sumItens(); // sum items
             var checked_input = $(this).is(':checked');
@@ -141,9 +142,23 @@
             }
             else {
                 $("#review_extra_ssl").replaceWith('<div id="review_extra_ssl" class="lead">' 
-                        + 'SSL Certificate <strong class="pull-right"> $ 24 </strong> </div>');                                            
+                        + 'SSL Certificate ( Renews Anually ) <strong class="pull-right"> $ 24 </strong> </div>');                                            
             }
-        });        
+        });  
+        
+        /* backups */
+        $( "#ckb_add_backuppro" ).change(function() {
+            sumItens(); // sum items
+            var checked_input = $(this).is(':checked');
+            /* div review migration */    
+            if(!checked_input){
+                $("#review_extra_backup").replaceWith('<div id="review_extra_backup" class="lead"></div>');                            
+            }
+            else {
+                $("#review_extra_backup").replaceWith('<div id="review_extra_backup" class="lead">' 
+                        + 'Backup Pro ( Renews Anually ) <strong class="pull-right"> $ 36 </strong> </div>');                                            
+            }
+        });          
         
 
         /* end plan renews */        
@@ -217,17 +232,22 @@
         if ( $('input[name="ckb_add_migrate"]').is(':checked') ) {
             var item_total = $('input[name="ckb_add_migrate"]').val();
             total += parseFloat(item_total);    
-            console.log("migrate");
+            //console.log("migrate");
         } 
         if ( $('input[name="ckb_add_ssl"]').is(':checked') ) {
             var item_total = $('input[name="ckb_add_ssl"]').val();
             total += parseFloat(item_total); 
-            console.log("ssl");
-        }                 
+            //console.log("ssl");
+        }  
+        if ( $('input[name="ckb_add_backuppro"]').is(':checked') ) {
+            var item_total = $('input[name="ckb_add_backuppro"]').val();
+            total += parseFloat(item_total); 
+            //console.log("backup");
+        }         
             
         total += parseFloat($('#review_product').attr("data-price"));
         
-        console.log('Total:' + total);
+        //console.log('Total:' + total);
 
         $("#price_total").html( total.toFixed(2) );
         
@@ -520,21 +540,21 @@
                                 <span class="help-block text-muted small-font"> Expiry Month</span>
                                 <input type="text" class="form-control" 
                                        name="cc_ex_month" id="cc_ex_month" 
-                                       placeholder="MM" />
+                                       placeholder="MM" maxlength="2" />
                                 <div class="text-danger" id="cc_ex_month_validate"></div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <span class="help-block text-muted small-font">  Expiry Year</span>
                                 <input type="text" class="form-control" 
                                        name="cc_ex_year" id="cc_ex_year" 
-                                       placeholder="YY" />
+                                       placeholder="YY" maxlength="2" />
                                 <div class="text-danger" id="cc_ex_year_validate"></div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <span class="help-block text-muted small-font">  Security Code</span>
                                 <input type="text" class="form-control" 
                                        name="cc_cvv" id="cc_ccv" 
-                                       placeholder="CVV"  />
+                                       placeholder="CVV" maxlength="4"  />
                                 <div class="text-danger" id="cc_cvv_validate"></div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
@@ -576,7 +596,18 @@
                         </p>
                     </label>                    
                 </div>
-                  
+
+                <div class="checkbox">
+                    <input type="checkbox" id="ckb_add_backuppro" name="ckb_add_backuppro" value="36"  onchange="sumItens()">
+                    <label for="ckb_add_backuppro">
+                        &nbsp; Backup Pro
+                        <p class="text-muted">
+                            $ 36 ( Billed Anually )<br />
+                            Recover files from long, medium, and short term backup archives, giving you a greater chance of finding the version you are looking for, instead of multiple copies of the same version.
+                        </p>
+                    </label>
+                </div>              
+              
                 <div class="checkbox">
                     <input type="checkbox" id="ckb_add_ssl" name="ckb_add_ssl" value="24"  onchange="sumItens()">
                     <label for="ckb_add_ssl">
@@ -597,6 +628,7 @@
                     <td>
                         <div id="review_product" data-price="0" class="col-md-9"></div>
                         <div id="review_extra_migration" class="col-md-9"></div>
+                        <div id="review_extra_backup" class="col-md-9"></div>
                         <div id="review_extra_ssl" class="col-md-9"></div>
                         <div id="review_results" class="col-md-9"></div>
                         
