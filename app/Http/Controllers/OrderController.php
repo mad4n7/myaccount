@@ -65,9 +65,7 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        
-
+    {        
         //validate an accesss
         if( Order::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
         {
@@ -78,7 +76,8 @@ class OrderController extends Controller
         
         $data['pk_stripe'] = config('services.stripe.key');        
                 
-        $data['invoice'] = Invoice::where('order_id', $id)->first();
+        $data['invoice'] = Invoice::where('order_id', $id)
+                ->orderBy('order_id', 'desc')->first();
         $data['order'] = Order::where('order_id', $id)->first();
                 
         $data['page_title'] = 'Order';

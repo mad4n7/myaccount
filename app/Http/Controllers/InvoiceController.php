@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\Product;
 use App\Invoice;
+use App\Order;
 
 class InvoiceController extends Controller
 {
@@ -256,6 +257,49 @@ class InvoiceController extends Controller
 
 
         return json_encode($date);
-    }     
+    }  
+    
+    /**
+     * Check all invoices that are CHARGES and change to PAID
+     */
+    public function checkAllChargesStatus()
+    {
+        $invoices = Invoice::pendingChargesByStatus();
+        //var_dump($invoices);
+        foreach ($invoices as $invoice) {
+            $obj = StripeController::retriveCharge($invoice->stripe_charger_id);
+            
+            if($obj->status == 'succeeded'){
+                $invoice_update = Invoice::find($invoice->invoice_id);
+                $invoice_update->paid_date = date('Y-m-d');
+                $invoice_update->inv_status = 'p';
+                $invoice_update->save();
+                echo 'Inv ID:'.$invoice->invoice_id.'<br />';
+            }
+        } 
+    }
+    
+    public function checkAllSubscriptionsStatus()
+    {
+        $invoices = Invoice::pendingSubscriptionsByStatus();
+        //var_dump($invoices);
+        foreach ($invoices as $invoice) {
+            $obj = StripeController::retriveSubscription($invoice->stripe_subscription_id);
+            
+            if($obj->status == 'active'){
+                $invoice_update = Invoice::find($invoice->invoice_id);
+                $invoice_update->paid_date = date('Y-m-d');
+                $invoice_update->inv_status = 'p';
+                $invoice_update->save();
+                
+                $order_update = Order::find($invoice->order_id);
+                $stripe_period_end = HelperController::fundDateUnixTimeToDateTime( $obj->current_period_end, 'date');
+                $order_update->next_duedate = $stripe_period_end;
+                $order_update->save();
+                
+                echo 'Inv ID:'.$invoice->invoice_id.'<br />';
+            }
+        } 
+    }    
         
 }

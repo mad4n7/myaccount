@@ -138,7 +138,7 @@ class PublicController extends Controller
                 $order_plan->product_id = Request::input('product_id');
                 $order_plan->domain_name = Request::input('domain_name');
                 $order_plan->periodicity = Request::input('product_periodicity');                
-                $order_plan->stripe_subscription_id = $subscription->id;                
+                $order_plan->stripe_subscription_id = $subscription->id;                   
                 $order_plan->save();                                                
                 
                 $invoice_1 = new Invoice;
@@ -146,6 +146,7 @@ class PublicController extends Controller
                 $invoice_1->order_id = $order_plan->order_id;                
                 $invoice_1->inv_status = 'u';
                 $invoice_1->plan_id = $prod_code_now;
+                $invoice_1->stripe_subscription_id = $subscription->id;
                 
                 if(Request::input('product_periodicity') == 'monthly'){                    
                     $invoice_1->amount = $selected_product->price_month;
@@ -177,6 +178,7 @@ class PublicController extends Controller
                     $invoice_1->inv_status = 'u';
                     $invoice_1->amount = Request::input('ckb_add_ssl');                    
                     $invoice_1->inv_description = '1 year of SSL Certificate';
+                    $invoice_1->stripe_subscription_id = $subscription2->id;
                     $invoice_1->save();
 
                     
@@ -202,6 +204,7 @@ class PublicController extends Controller
                     $invoice_1->inv_status = 'u';
                     $invoice_1->amount = Request::input('ckb_add_backuppro');                    
                     $invoice_1->inv_description = '1 year of SSL Certificate';
+                    $invoice_1->stripe_subscription_id = $subscription3->id;
                     $invoice_1->save();
 
                     
@@ -217,7 +220,6 @@ class PublicController extends Controller
                     
                     $invoice_1 = new Invoice;
                     $invoice_1->user_id = Auth::user()->id;
-                    $invoice_1->order_id = $order_plan->order_id;
                     $invoice_1->inv_status = 'u';
                     $invoice_1->stripe_si_id = null;
                     $invoice_1->plan_id = null;

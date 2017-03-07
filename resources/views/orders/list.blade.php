@@ -14,8 +14,8 @@
                 <tr>
                     <td><strong>ID</strong></td>
                     <td><strong>Domain Name</strong></td>
-                    <td><strong>Ordered Date</strong></td>
-                    <td><strong>Status</strong></td>
+                    <td><strong>Order's Date</strong></td>
+                    <td><strong>Next Due Date</strong></td>
                     <td><strong>Actions</strong></td>
                 </tr>
                 <?php foreach ($orders as $order) { ?>
@@ -23,7 +23,7 @@
                     <td>{{ $order->order_id }}</td>
                     <td>{{ $order->domain_name }}</td>
                     <td><?php echo App\Http\Controllers\HelperController::funcDateTimeMysqlToUSA($order->created_at);  ?></td>
-                    <td><?php echo App\Http\Controllers\HelperController::returnPymtStatusByChar($order->inv_status); ?></td>
+                    <td><span class="text-danger"><?php echo App\Http\Controllers\HelperController::funcDateMysqlToUSA($order->next_duedate); ?></span></td>
                     <td>
                         <div class="row">
                         <div class="col-md-3"> 

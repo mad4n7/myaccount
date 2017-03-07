@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterAddOrderStatusOrdersTable extends Migration
+class AlterChangeNullableOrderIdInvoicesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AlterAddOrderStatusOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->char('order_status', 4)->nullable();
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->integer('order_id')->nullable()->change();
         });
     }
 
@@ -25,8 +25,8 @@ class AlterAddOrderStatusOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['order_status']);
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->integer('order_id')->index()->unsigned()->change();
         });
     }
 }

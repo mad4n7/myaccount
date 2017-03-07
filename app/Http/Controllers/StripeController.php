@@ -239,6 +239,20 @@ class StripeController extends Controller
         
         http_response_code(200); // PHP 5.4 or greater
         
+    }   
+    
+    public static function retriveCharge($charge){
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+        $r = \Stripe\Charge::retrieve($charge);
+        return $r;
+        
+    }
+    
+    public static function retriveSubscription($subscription){
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+        $r = \Stripe\Subscription::retrieve($subscription);
+        return $r;
+        
     }    
     
 }

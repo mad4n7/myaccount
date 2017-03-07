@@ -89,7 +89,7 @@
 
            <div class="form-group">
             <div class="col-md-8 col-xs-8 lead">
-                <img src="{{ asset('images/payments/pending.png') }}" style="height: 64px;" /> We are processing your payment. This might take a few hours.
+                <img src="{{ asset('images/payments/pending.png') }}" style="height: 64px;" /> We are processing your payment. This might take a few minutes.
             </div>
            </div>
             

@@ -35,5 +35,22 @@ protected $primaryKey = 'invoice_id';
         }
   } 
 
+  public static function pendingChargesByStatus()
+  {
+    $r = DB::table('invoices')
+                        ->where('inv_status', 'u')
+                        ->whereNotNull('stripe_charger_id')
+                        ->get();
+    return $r;
+  }
+  
+  public static function pendingSubscriptionsByStatus()
+  {
+    $r = DB::table('invoices')
+                        ->where('inv_status', 'u')
+                        ->whereNotNull('stripe_subscription_id')
+                        ->get();
+    return $r;
+  }  
   
 }

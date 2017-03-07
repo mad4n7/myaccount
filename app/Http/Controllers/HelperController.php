@@ -274,6 +274,25 @@ class HelperController extends Controller
 
           }        
         
+        /**
+         * 
+         * @param type $date
+         * @return Y-m-d H:i:s
+         */  
+        public static function fundDateUnixTimeToDateTime($date, $return_type)
+        {
+            $unix_time = $date;
+            $dt = new DateTime("@$unix_time");  // convert UNIX timestamp to PHP DateTime
+            
+            if($return_type == 'date'){
+                return $dt->format('Y-m-d'); // output = 2017-01-01
+            }
+            else {
+                return $dt->format('Y-m-d H:i:s'); // output = 2017-01-01 00:00:00            
+            }
+            
+            
+        }
           
           
 }
