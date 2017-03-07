@@ -25,7 +25,7 @@ protected $primaryKey = 'invoice_id';
   {
         $result = DB::table('invoices')
                             ->where('invoice_id', '=', $id)
-                            ->where('user_id', '=', $user_id)                                
+                            ->where('user_id', '=', $user_id)
                             ->count();
         if( $result > 0 ){
             return true;
@@ -33,8 +33,7 @@ protected $primaryKey = 'invoice_id';
         else {
             return false;
         }
-  }   
-  
-  
+  } 
 
+  
 }

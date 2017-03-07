@@ -45,7 +45,7 @@
         
             
         <div class="section">
-          <div class="section-title">Itens</div>
+          <div class="section-title">Description</div>
           <div class="section-body">
     
            <div class="form-group">              
@@ -53,9 +53,7 @@
                   
                 <div class="list-group">
                     <ul>
-                    <?php foreach ($invoice_itens as $item){ ?>
-                        <li>{{ $item->item_description }} - <?php echo \App\Http\Controllers\HelperController::funcConvertDecimalToCurrency($item->item_total); ?></li>
-                    <?php } ?>
+                        <li class="lead">{{ $invoice->inv_description }}</li>
                     </ul>
                 </div>
                 
@@ -86,18 +84,14 @@
             
         <?php if($invoice->inv_status != 'p') { ?>
         <div class="section">
-          <div class="section-title">Select a Payment Type</div>
+          <div class="section-title">About the Status</div>
           <div class="section-body">
 
            <div class="form-group">
-              <label class="col-md-3 control-label">PayPal</label>
-              <div class="col-md-6">
-                  <a href="{{url("invoice/paypal/checkout")}}/{{ $invoice->invoice_id }}" title="Pay with PayPal">                      
-                    <img src="{{ asset('images/third_party/paypal_button.jpg') }}" title="Pay with PayPal" />
-                  </a>
-                <div id="domain_name_validate"></div>
-              </div>
+            <div class="col-md-8 col-xs-8 lead">
+                <img src="{{ asset('images/payments/pending.png') }}" style="height: 64px;" /> We are processing your payment. This might take a few hours.
             </div>
+           </div>
             
           </div>
         </div>            

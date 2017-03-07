@@ -13,6 +13,8 @@ use App\Order;
 use App\Invoice;
 use App\Invoices_item;
 use App\User;
+use App\Country;
+use App\UsState;
 
 
 class OrderController extends Controller
@@ -42,19 +44,7 @@ class OrderController extends Controller
      */
     public function create()
     {
-        if(Request::has("product")){
-           $selected_product = Request::input("product");
-        }
-        else {
-            $selected_product = "";
-        }
-        $data['countries'] = Country::all();
-        $data['us_states'] = UsState::all();
-        
-        $data['selected_product'] = $selected_product;
-        $data['products'] = Product::all();        
-        $data['page_title'] = 'Pricing';
-        return view('hosting.add', $data);
+     
     }
 
     /**
@@ -87,8 +77,7 @@ class OrderController extends Controller
         $user = User::find(Auth::user()->id);        
         
         $data['pk_stripe'] = config('services.stripe.key');        
-        
-        $data['order_itens'] = Invoices_item::where('order_id', $id)->get();
+                
         $data['invoice'] = Invoice::where('order_id', $id)->first();
         $data['order'] = Order::where('order_id', $id)->first();
                 
@@ -105,8 +94,7 @@ class OrderController extends Controller
             Session::flash('msg_error', 'Sorry, the invoice that you are trying to access does not belong to you.');
             return redirect('/home');
         }   
-        
-        $data['order_itens'] = Invoices_item::where('order_id', $id)->get();
+
         $data['invoice'] = Invoice::where('order_id', $id)->first();
         $data['order'] = Order::where('order_id', $id)->first();
                 

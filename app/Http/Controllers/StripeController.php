@@ -84,7 +84,10 @@ class StripeController extends Controller
      */
     public static function createCard($stripe_id, $user_id, $name_on_card, $card_num, $exp_month, $exp_year, $cvv, $optional )
     {
-        /* Testing data
+        /* 
+         * Testing data
+         * (more numbers)
+         * https://stripe.com/docs/testing
             "number" => "4242424242424242",
             "exp_month" => 3,
             "exp_year" => 2018,
@@ -116,7 +119,7 @@ class StripeController extends Controller
         $customer->sources->create(array("source" => $token));        
         
         
-        return $customer;
+        return $token;
     }
     
     public static function subscribeToAPlan($user_id, $plan_id)
@@ -132,6 +135,32 @@ class StripeController extends Controller
         ));
         return $customer;
     }  
+    
+    
+    
+    public static function deleteCard($stripe_id, $card_stripe_id)
+    {        
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));        
+        $customer = \Stripe\Customer::retrieve($stripe_id);
+        $customer->sources->retrieve($card_stripe_id)->delete();        
+        return $customer;
+    }  
+    
+    public static function getCard($stripe_id, $card_stripe_id)
+    {        
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));        
+        $customer = \Stripe\Customer::retrieve($stripe_id);
+        $card = $customer->sources->retrieve($card_stripe_id);       
+        return $card;
+    }  
+    
+    public static function getAllCardsByCustomer($stripe_id)
+    {        
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));        
+        $cards = \Stripe\Customer::retrieve($stripe_id)->sources->all(array(
+          'limit'=>3, 'object' => 'card'));      
+        return $cards;
+    }     
     
     /**
      * createCharge(17400 = $174.00, 'usd', 'cus_SDSJDKS28h', 'invoice XYZ')
@@ -190,6 +219,26 @@ class StripeController extends Controller
             $user = User::where('stripe_id', $event_json->data->object->id)->first();
         }
 
-        http_response_code(200); // PHP 5.4 or greater        
+        http_response_code(200); // PHP 5.4 or greater     
     }
+    
+    
+    public static function retriveEvent(){
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+        // Retrieve the request's body and parse it as JSON
+        $input = @file_get_contents("php://input");
+        $event_json = json_decode($input);
+
+        // Do something with $event_json
+        // success
+        if($event_json->type == 'charge.succeeded'){
+            
+        }
+        
+        
+        http_response_code(200); // PHP 5.4 or greater
+        
+    }    
+    
 }

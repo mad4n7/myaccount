@@ -98,9 +98,9 @@
                   
                 <div class="list-group">
                     <ul>
-                    <?php foreach ($order_itens as $item){ ?>
-                        <li>{{ $item->item_description }} - <?php echo \App\Http\Controllers\HelperController::funcConvertDecimalToCurrency($item->item_total); ?></li>
-                    <?php } ?>
+                    
+                        <li>{{ $invoice->inv_description }} - <?php echo \App\Http\Controllers\HelperController::funcConvertDecimalToCurrency($invoice->amount); ?></li>
+                    
                     </ul>
                 </div>
                 
@@ -137,16 +137,15 @@
            <!-- Payment methods -->     
            <div class="form-group" id="small_m">
               
-              <div class="col-md-6">
-                  
+              <div class="col-md-8 col-xs-8 lead">
+                    <img src="{{ asset('images/payments/pending.png') }}" style="height: 64px;" /> We are processing your payment. This might take a few hours.                  
               </div>
             </div>
            
            <!-- End Payment methods -->
             
           </div>
-        </div>  
-            <div><p class="text-muted">* We are only processing payments through PayPal at this time. You'll be redirect to the PayPal website to complete checkout.</p></div>
+        </div>              
         <?php } ?>  
         <!-- end total -->
             

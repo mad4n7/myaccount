@@ -50,6 +50,8 @@ class UserController extends Controller
         $data['countries'] = Country::all();
         $data['us_states'] = UsState::all();
         
+        $data['list_cc'] = StripeController::getAllCardsByCustomer($data['user']->stripe_id);
+        
         $data['page_title'] = 'Profile';  
         //return view('home', $data);
         return view('auth.profile', $data);   
@@ -123,6 +125,44 @@ class UserController extends Controller
         }                
 
     }    
+    
+    public function updateStripeCreditCard(Request $request)
+    {
+        
+
+        $validator = Validator::make($request->all(), [
+            'cc_number' => 'required',
+            'cc_ex_month' => 'required',
+            'cc_ex_year' => 'required',
+            'cc_cvv' => 'required',
+            'cc_name' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+                Session::flash('msg_error', 'Sorry we can not add a new credit card now, some data is missing. ');
+                return redirect('/profile');
+        }
+
+        $user = User::find(Auth::user()->id);
+        $user_details = User::find(Auth::user()->id)->details;
+
+  
+        $extra_options = array(
+            "address_city" => $user_details->city,
+            "address_state" => $user_details->us_state_code,
+            "address_country" => $user_details->country_code,
+            "address_line1" => $user_details->address,            
+            "address_zip" => $user_details->zip_code);
+
+        StripeController::createCard($user->stripe_id, 
+                $user->id, $request->input('cc_name'),
+                $request->input('cc_number'), 
+                $request->input('cc_ex_month'), 
+                $request->input('cc_ex_year'), $request->input('cc_ccv'),
+                $extra_options);
+            Session::flash('msg', 'Credit Card added. Thank you.');
+            return redirect('/profile');         
+    }      
  
 
     /**

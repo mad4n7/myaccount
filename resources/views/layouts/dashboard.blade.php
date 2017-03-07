@@ -83,7 +83,8 @@
           <div class="title">Dashboard</div>
         </a>
       </li>      
-    <li class="dropdown <?php if ( Request::is('orders') || Request::is('orders/*') ){ echo ' active'; } ?> " >
+    <li class="dropdown <?php if ( Request::is('orders') || Request::is('hosting') 
+            || Request::is('orders/*') ){ echo ' active'; } ?> " >
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           <div class="icon">
             <i class="fa fa-cube" aria-hidden="true"></i>
@@ -93,7 +94,7 @@
         <div class="dropdown-menu">
           <ul>
             <li class="section"><i class="fa fa-file-o" aria-hidden="true"></i> Options</li>
-            <li><a href="{{ url('orders/create') }}">Add New Order</a></li>
+            <li><a href="{{ url('/hosting') }}">Add New Hosting</a></li>
             <li><a href="{{ url('orders') }}">My Orders</a></li>                        
           </ul>
         </div>

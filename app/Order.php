@@ -41,8 +41,7 @@ class Order extends Model
     {
         try{
           $result = DB::table('orders')                        
-                        ->where('orders.user_id', '=', $user_id)                                
-                        ->join('invoices', 'invoices.order_id', '=', 'orders.order_id')                        
+                        ->where('orders.user_id', '=', $user_id)                        
                         ->get();
           
      

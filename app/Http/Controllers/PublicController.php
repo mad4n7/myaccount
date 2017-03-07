@@ -96,14 +96,18 @@ class PublicController extends Controller
                         "address_line1" => Request::input('address'),            
                         "address_zip" => Request::input('zip_code'));
 
-                    StripeController::createCard($stripe_user->id, 
+                    $credit_card = StripeController::createCard($stripe_user->id, 
                             $user->id, Request::input('cc_name'),
                             Request::input('cc_number'), 
                             Request::input('cc_ex_month'), 
                             Request::input('cc_ex_year'), Request::input('cc_ccv'),
                             $extra_options);
-
-
+                    
+                    //update the card ID
+                    $user_update_cc = User::find($user->id);
+                    $user_update_cc->card_id = $credit_card->card->id;
+                    $user_update_cc->save();
+                            
                     //create user details
                     $generated_token = md5( date('mdYhis').'user_email'.$user->email );
                     $user_detail = new User_detail;
@@ -208,6 +212,8 @@ class PublicController extends Controller
                     // add subitem
                     $user_db = User::find(Auth::user()->id);
 
+                    // Charge it separated
+                    $charge = StripeController::createCharge(6000, 'usd', $user_db->stripe_id, $invoice_1->inv_description);                    
                     
                     $invoice_1 = new Invoice;
                     $invoice_1->user_id = Auth::user()->id;
@@ -217,28 +223,27 @@ class PublicController extends Controller
                     $invoice_1->plan_id = null;
                     $invoice_1->amount = Request::input('ckb_add_migrate');                    
                     $invoice_1->inv_description = 'Website migration (up to 3)';
-                    $invoice_1->save();        
-                    
-                    // Charge it separated
-                    StripeController::createCharge(6000, 'usd', $user_db->stripe_id, $invoice_1->inv_description);                    
-                    
+                    $invoice_1->stripe_charger_id = $charge->id;
+                    $invoice_1->save();    
 
-                }                
+                }           
                 
-                //send e-mail
-                $data_email = [                    
-                    "user" => $user,
-                    "email" => $user->email,
-                    "name" => $user->name,
-                    "token" => $generated_token
-                ];
-                //send email
-                Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
-                {
-                    $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
-                });                 
-                
-                return redirect('/orders/'.$order_plan->order_id);          
+                //if not logged in
+                if (!Auth::check()) {
+                    //send e-mail
+                    $data_email = [                    
+                        "user" => $user,
+                        "email" => $user->email,
+                        "name" => $user->name,
+                        "token" => $generated_token
+                    ];
+                    //send email
+                    Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
+                    {
+                        $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
+                    });                 
+                }
+                return redirect('/orders');          
                 
                 
             } catch (Exception $ex) {
