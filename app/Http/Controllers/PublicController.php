@@ -21,6 +21,12 @@ use App\UsState;
 class PublicController extends Controller
 {
     
+    public function termsConditions()
+    {
+        $data['page_title'] = 'Terms & Agreements';
+        return view('terms_conditions', $data);
+    }
+    
     public function hosting()
     {       
         $data['products'] = Product::getAllHosting();       
@@ -37,6 +43,12 @@ class PublicController extends Controller
             $selected_product = "";
         }
             
+        /* check if its authenticated because auth users and not auth can access */
+        if(isset(Auth::user()->id) ){
+            $user_tmp = User::find(Auth::user()->id);
+            $data['user_tmp'] = $user_tmp;
+        }
+        
         $data['countries'] = Country::all();
         $data['us_states'] = UsState::all();
         
@@ -73,19 +85,40 @@ class PublicController extends Controller
                     $prod_code_now = $selected_product->prod_code_yearly;
                 }                
                 
+                /* check if its authenticated because auth users and not auth can access */
+                if(isset(Auth::user()->id) ){
+                    $user_tmp = User::find(Auth::user()->id);
+                    $add_user = 0;
+                }
+                else {
+                    $add_user = 1;
+                }
+                
                 // not authenticated
-                if (!Auth::check()) {
-                    $user = new User;
-                    $user->name = Request::input('name');
-                    $user->email = Request::input('email');
-                    $user->password = bcrypt(Request::input('password'));                
-                    $user->save();
+                if (!Auth::check() || 
+                        (isset($user_tmp) && 
+                        empty($user_tmp->card_id) ) ) {
+                    
+                    if($add_user == 1){
+                        $user = new User;
+                        $user->name = Request::input('name');
+                        $user->email = Request::input('email');
+                        $user->password = bcrypt(Request::input('password'));                
+                        $user->save();
+                        
+                        //save the stripe ID
+                        $user_update = User::find($user->id);
+                        $stripe_user = StripeController::createUser($user->id);
+                        $user_update->stripe_id = $stripe_user->id;   
+                        $user_update->save();
+                        
+                        Auth::login($user);
+                    }
+                    else {
+                        $user = User::find(Auth::user()->id);
+                        $stripe_user = StripeController::retriveUser($user->stripe_id);
+                    }
 
-                    //save the stripe ID
-                    $user_update = User::find($user->id);
-                    $stripe_user = StripeController::createUser($user->id);
-                    $user_update->stripe_id = $stripe_user->id;   
-                    $user_update->save();
 
                     //create a credit cart token
 
@@ -122,13 +155,11 @@ class PublicController extends Controller
                     $user_detail->us_state_code = Request::input('us_state_code');
                     $user_detail->save();
 
-                    Auth::login($user);
+                    
                 
                 }
                 //end not authenticated
 
-                
-                
                 // do subscription
                 $subscription = StripeController::subscribeToAPlan(Auth::user()->id, $prod_code_now);
                                 
@@ -231,7 +262,7 @@ class PublicController extends Controller
                 }           
                 
                 //if not logged in
-                if (!Auth::check()) {
+                if (!Auth::check() || ! isset($user_tmp)) {
                     //send e-mail
                     $data_email = [                    
                         "user" => $user,

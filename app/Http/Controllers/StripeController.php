@@ -48,6 +48,13 @@ class StripeController extends Controller
     }
     
 
+    public static function retriveUser($user){
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+        $r = \Stripe\Customer::retrieve($user);
+        return $r;
+        
+    }    
+        
     
     /**
      * 

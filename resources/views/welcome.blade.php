@@ -116,6 +116,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
 
                                             <div class="form-group">
                                                 <div class="col-md-8 col-md-offset-4">
@@ -128,6 +129,15 @@
                                                     </a>
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <div class="col-md-8 col-md-offset-4">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="terms" required/>  By checking this box, I acknowledge that I have read and accept the <a href="{{ url('/terms_conditions') }}">Terms and Conditions</a>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>                                            
                                         </form>
                                     </div>
                                 </div>

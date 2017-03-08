@@ -21,7 +21,7 @@ Route::get('/order', function () {
 
 Auth::routes();
 
-Route::get('/stripe/webook', 'StripeController@webhook');
+Route::get('/terms_conditions', 'PublicController@termsConditions');
 
 Route::get('/hosting', 'PublicController@hosting');
 Route::get('/hosting/order', 'PublicController@order');

@@ -32,7 +32,10 @@
                 focusInvalid: true,
                 rules: {
                     
-                        <?php if (!Auth::check()) {  ?>  
+                        <?php                                              
+                        if (!Auth::check() || 
+                        (isset($user_tmp) && empty($user_tmp->card_id) ) ) { 
+                        ?>  
                         name: "required",
                         email: "required",
                         password: "required",
@@ -403,7 +406,9 @@
             
         <?php
         // dont show if is authenticated
-        if (!Auth::check()) {  ?>    
+        if (!Auth::check() || 
+                        (isset($user_tmp) && empty($user_tmp->card_id) ) ) {
+        ?>    
         <!-- billing -->  
         
         <div class="panel panel-success">
@@ -412,6 +417,9 @@
         <div class="row">
             <!-- section 1 -->
             <div class="col-md-6">
+                <?php 
+                // if not set show these fields for the first time
+                if(! isset($user_tmp)) { ?>
                 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                     <label for="name" class="col-md-4 control-label">Full Name</label>
 
@@ -446,7 +454,7 @@
                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                     </div>
                 </div>
-                
+                <?php } //end ?>
 
                     <div class="form-group">
                        <label for="phone_number" class="col-md-4 control-label">Phone Number</label>
