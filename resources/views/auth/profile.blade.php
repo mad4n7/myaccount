@@ -21,7 +21,8 @@ $(function() {
                     phone_number: "required",
                     zip_code: "required",
                     city: "required",
-                    country: "required"
+                    country: "required",
+                    us_state_code: "required"
             },
             messages: {
                     email: "Please, type the website address(domain name)"                    
@@ -204,7 +205,7 @@ function deleteCard() {
                     </div>
                     
                     <div class="form-group">
-                       <label for="country">State</label>
+                       <label for="us_state_code">State</label>
                        <select class="form-control" name="us_state_code" id="us_state_code">
                            <option>Select...</option>
                         <?php foreach ($us_states as $us_state){ 
@@ -220,7 +221,7 @@ function deleteCard() {
                         <?php } ?>
                         
                       </select>
-                       <div class="text-danger" id="country_validate"></div>
+                       <div class="text-danger" id="us_state_code_validate"></div>
                    </div>                    
                     
                     <div class="form-group">
