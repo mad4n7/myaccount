@@ -7,6 +7,7 @@
 
 <script>
     $(function() {               
+        $("#review_extra_migration_details").hide();
         
         /* tooltips */
         var tooltips = $( "[title]" ).tooltip({
@@ -57,7 +58,7 @@
                         },
                         cc_number: {
                             required: true,
-                            number: true
+                            number: true         
                         },
                         phone_number: "required",
                         address: "required",
@@ -78,7 +79,7 @@
                 },
                 messages: {
                         domain_name: "Please, type the website address(domain name)",
-                        terms_conditions: "In order to continue you must agree to Cat&Mouse's Terms and Conditions."
+                        terms_conditions: "In order to continue you must agree to Cat&Mouse's Terms and Conditions."                        
                 },
                 errorPlacement: function (error, element) {
                     var name = $(element).attr("name");
@@ -93,6 +94,7 @@
             var product_id = $("#hosting_plan").val();
             var price = "";
             var plan_renews = "";
+            var save_percent = "";
             
             
             $.getJSON ('<?php echo url('json/invoices/get_renews_on_by_billing_cycle'); ?>?type=' + type , function (str_date){                                                
@@ -104,11 +106,12 @@
                         plan_renews = "( Renews Monthly )";
                     }
                     else {
-                        price = data.anually_price;
-                        plan_renews = "( Renews Anually )";
+                        price = data.annually_price;
+                        plan_renews = "( Renews Annually )";
+                        save_percent = ' ( Save 14 % )';
                     }               
                     /* When it will renew) */
-                    $("#plan_renews").replaceWith('<div id="plan_renews"  class="text-muted">Plan renews ' + str_date + ' at $ ' + price + '</div>');                                           
+                    $("#plan_renews").replaceWith('<div id="plan_renews"  class="text-muted">Plan renews ' + str_date + ' at $ ' + price  + save_percent + '</div>');                                           
                     $('#db_product_price').val(price); //defines produt price
                     $('#product_id').val(product_id);   //defines product id
                     $('#product_periodicity').val(type); // periodicity
@@ -128,10 +131,12 @@
             if(!checked_input){
                 $("#review_extra_migration").replaceWith('<div id="review_extra_migration" class="lead">' 
                                     + '</div>');                
+                $("#review_extra_migration_details").hide();
             }
             else {
-            $("#review_extra_migration").replaceWith('<div id="review_extra_migration" class="lead">' 
-                    + 'Migrate my Website <strong class="pull-right"> $ 60 </strong> </div>');                            
+                $("#review_extra_migration").replaceWith('<div id="review_extra_migration" class="lead">' 
+                        + 'Migrate Website(s) <strong class="pull-right"> $ 60.00 </strong> </div>');                            
+                $("#review_extra_migration_details").show();
             }
         });
         
@@ -145,7 +150,7 @@
             }
             else {
                 $("#review_extra_ssl").replaceWith('<div id="review_extra_ssl" class="lead">' 
-                        + 'SSL Certificate ( Renews Anually ) <strong class="pull-right"> $ 24 </strong> </div>');                                            
+                        + 'SSL Certificate (Renews Annually) <strong class="pull-right"> $ 24.00 </strong> </div>');                                            
             }
         });  
         
@@ -159,7 +164,7 @@
             }
             else {
                 $("#review_extra_backup").replaceWith('<div id="review_extra_backup" class="lead">' 
-                        + 'Backup Pro ( Renews Anually ) <strong class="pull-right"> $ 36 </strong> </div>');                                            
+                        + 'Backup Pro (Renews Annually) <strong class="pull-right"> $ 36.00 </strong> </div>');                                            
             }
         });          
         
@@ -213,10 +218,10 @@
         var id = $("#hosting_plan").val()
         $.getJSON ('<?php echo url('json/invoices/get_prices_by_product'); ?>?id=' + id , function (data){                                                
             
-            $("#billing_cycle").append('<option value="anually" '+
-                    ' data-price="' + data.anually_price + '" >Anually - $' 
-                    + data.anually_monthly_price + ' per month - $' 
-                    + data.anually_price + ' ( Save 14%! )</option>');
+            $("#billing_cycle").append('<option value="annually" '+
+                    ' data-price="' + data.annually_price + '" >Annually - $' 
+                    + data.annually_monthly_price + ' per month - $' 
+                    + data.annually_price + ' ( Save 14%! )</option>');
             $("#billing_cycle").append('<option value="monthly" '+
                     ' data-price="' + data.monthly_price + '">Monthly - $'  
                     + data.monthly_price + ' per month </option>');            
@@ -421,7 +426,7 @@
                 // if not set show these fields for the first time
                 if(! isset($user_tmp)) { ?>
                 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                    <label for="name" class="col-md-4 control-label">Full Name</label>
+                    <label for="name" class="col-md-4 control-label">Full Name (First, Last)</label>
 
                     <div class="col-md-6">
                         <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required>
@@ -537,7 +542,8 @@
                             </div>
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <input type="text" class="form-control" 
-                                       name="cc_number" id="cc_number" 
+                                       name="cc_number" id="cc_number"
+                                       minlength="13" maxlength="19"
                                        placeholder="" />
                                 <div class="text-danger" id="cc_number_validate"></div>
                             </div>
@@ -574,7 +580,7 @@
 
                                 <input type="text" class="form-control" 
                                        name="cc_name" id="cc_name" 
-                                       placeholder="Name On The Card" />
+                                       placeholder="Name On Card" />
                                 <div class="text-danger" id="cc_name_validate"></div>
                             </div>
                         </div>
@@ -595,22 +601,30 @@
           <div class="panel-body">
                   
                 <div class="checkbox">
-                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="60" onchange="sumItens()">
+                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="60" onchange="sumItens()" />
                     <label for="ckb_add_migrate">
-                        &nbsp; Migrate my Website   
+                        &nbsp; Migrate Website(s)   
                         <p class="text-muted"> 
-                            $ 60 up to 3 websites ( Billed once )<br />
-                            We can migrate your website from the actual hosting to Cat&Mouse Hosting.
+                            $ 60 up to 3 websites (Billed once)<br />
+                            If your domain is currently hosted elsewhere, we can move it to Cat & Mouse Co. for you.
                         </p>
                     </label>                    
                 </div>
-
+                <div id="review_extra_migration_details" class="col-md-9">
+                    <div class="form-group">
+                      <label for="comment">Domain names to migrate:</label>
+                      <textarea class="form-control" rows="5" 
+                                name="migration_domains"
+                                id="migration_domains"></textarea>
+                    </div>
+                </div>
+              <br style="clear: both;" />
                 <div class="checkbox">
                     <input type="checkbox" id="ckb_add_backuppro" name="ckb_add_backuppro" value="36"  onchange="sumItens()">
                     <label for="ckb_add_backuppro">
                         &nbsp; Backup Pro
                         <p class="text-muted">
-                            $ 36 ( Billed Anually )<br />
+                            $ 36 (Billed Annually)<br />
                             Recover files from long, medium, and short term backup archives, giving you a greater chance of finding the version you are looking for, instead of multiple copies of the same version.
                         </p>
                     </label>
@@ -620,7 +634,7 @@
                     <input type="checkbox" id="ckb_add_ssl" name="ckb_add_ssl" value="24"  onchange="sumItens()">
                     <label for="ckb_add_ssl">
                         &nbsp; SSL Certificate 
-                        <p class="text-muted">$ 24 ( Billed Anually )</p>
+                        <p class="text-muted">$ 24 (Billed Annually)</p>
                     </label>
                 </div>                
 
@@ -644,8 +658,8 @@
                 </tr>
                 <tr>
                     <td>
-                        <div id="review_results" class="lead">
-                            Amount Due: 
+                        <div id="review_results" class="lead pull-right">
+                            Amount Due:&nbsp; 
                             <strong class="pull-right">$ <span id="price_total"></span> </strong>
                         </div>
                     </td>
@@ -662,10 +676,13 @@
                 <div class="checkbox">
                     <input type="checkbox" id="terms_conditions" name="terms_conditions">
                     <label for="terms_conditions">
-                        &nbsp; Yes, I agree with the Cat&Mouse <a href="#">Terms and Conditions</a>.
+                        &nbsp; Yes, I agree with the Cat&Mouse <a href="{{ url('/terms_conditions') }}" 
+                                                                  target="_new">Terms and Conditions</a>.
                     </label>
                     <br />
-                    <div class="text-danger" id="terms_conditions_validate"></div>
+                    <div class="text-danger" 
+                         style="font-size: x-large; font-weight: bold;" 
+                         id="terms_conditions_validate"></div>
                 </div>                  
                 
               </div>                           

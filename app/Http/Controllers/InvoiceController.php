@@ -238,8 +238,8 @@ class InvoiceController extends Controller
         $product = Product::find(Request::query('id'));
 
 
-        $data["anually_price"] = $product->price_year;
-        $data["anually_monthly_price"] =  round($product->price_year/12,2);
+        $data["annually_price"] = $product->price_year;
+        $data["annually_monthly_price"] =  round($product->price_year/12,2);
         $data["monthly_price"] = $product->price_month;
         $data["product_name"] = $product->prod_name;
 

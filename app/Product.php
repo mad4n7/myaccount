@@ -17,12 +17,21 @@ class Product extends Model
         return $result;
   }    
     
-  
- public static function getAllHosting()
+  public static function getAllHosting()
  {
     $r = DB::table('products')
                     ->where('prod_code_yearly', 'like', 'hosting%')
+                    ->get();
+    return $r;
+ }
+ public static function getAllSharedHosting()
+ {
+    $r = DB::table('products')
+                    ->where('prod_code_yearly', 'like', 'hosting%')
+                    ->where('prod_code_yearly', 'not like', '%vps%')
                     ->get();  
     return $r;
  }
+ 
+ 
 }

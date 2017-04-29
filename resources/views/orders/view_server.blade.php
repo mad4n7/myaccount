@@ -23,7 +23,7 @@
                     <h2  id="server_details"></h2><i class="fa fa-laptop fa-2x" aria-hidden="true"></i> &nbsp; Server Details
                 </div>
                 <div class="card-body lead">
-                    <p>Control Panel: <a href="http://catandmouse.co/cpanel">catandmouse.co/cpanel</a></p>
+                    <p>Control Panel: <a href="https://catandmouse.co/cpanel" target="_new">catandmouse.co/cpanel</a></p>
                     <p>domain name: <strong>{{ $order->domain_name }}</strong></p>
                     <?php if( !empty($order->domain_user) && !empty($order->domain_password) ) { ?>
                         <p>user: <strong>{{ $order->domain_user }}</strong></p>

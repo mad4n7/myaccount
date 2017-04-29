@@ -72,7 +72,7 @@
             foreach ($products as $product) { 
                 ?>
 
-              <div class="col-md-4 col-sm-6">
+              <div class="col-md-4 col-sm-6" style="padding-top: 3%;">
                 <div id="pricing-table-item-{{ $i }}" class="pricing-table no-border-left">
                   <div class="pricing-heading">
                     <div class="title">{{ $product->prod_name }}</div>
@@ -98,11 +98,14 @@
                   </div>
                 </div>
               </div>
-            <?php $i++; } ?>  
+                
+            <?php $i++; } ?>                  
                 
             </div>
-          </div>
+          </div>              
             </div>
+            <br />
+            <p class="pull-right lead">If you need more robost hosting, please contact us.</p>
         </div>
     </div>
     <!-- end  pricing table -->

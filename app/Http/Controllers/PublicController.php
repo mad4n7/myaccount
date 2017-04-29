@@ -21,15 +21,30 @@ use App\UsState;
 class PublicController extends Controller
 {
     
+    public function login()
+    {
+        
+        
+        $data['page_title'] = 'Login';
+        
+        if (Auth::check()) {
+            return view('home', $data);
+        }        
+        else {
+            return view('terms_conditions', $data);
+        }
+    }
+    
     public function termsConditions()
     {
         $data['page_title'] = 'Terms & Agreements';
         return view('terms_conditions', $data);
     }
     
+    
     public function hosting()
     {       
-        $data['products'] = Product::getAllHosting();       
+        $data['products'] = Product::getAllSharedHosting();       
         $data['page_title'] = 'Plans';
         return view('hosting.plans', $data);
     }
@@ -170,6 +185,7 @@ class PublicController extends Controller
                 $order_plan->domain_name = Request::input('domain_name');
                 $order_plan->periodicity = Request::input('product_periodicity');                
                 $order_plan->stripe_subscription_id = $subscription->id;                   
+                $order_plan->migration_domains = Request::input('migration_domains');
                 $order_plan->save();                                                
                 
                 $invoice_1 = new Invoice;
@@ -199,7 +215,7 @@ class PublicController extends Controller
                     $order_plan->user_id = Auth::user()->id;
                     $order_plan->product_id = 4;
                     $order_plan->domain_name = Request::input('domain_name');
-                    $order_plan->periodicity = 'anually';                
+                    $order_plan->periodicity = 'annually';                
                     $order_plan->stripe_subscription_id = $subscription2->id;                
                     $order_plan->save();   
                 
@@ -225,7 +241,7 @@ class PublicController extends Controller
                     $order_plan->user_id = Auth::user()->id;
                     $order_plan->product_id = 5;
                     $order_plan->domain_name = Request::input('domain_name');
-                    $order_plan->periodicity = 'anually';                
+                    $order_plan->periodicity = 'annually';                
                     $order_plan->stripe_subscription_id = $subscription3->id;                
                     $order_plan->save();   
                 
