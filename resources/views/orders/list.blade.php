@@ -13,6 +13,7 @@
             <table class="table table-hover">
                 <tr>
                     <td><strong>ID</strong></td>
+                    <td><strong>Product</strong></td>
                     <td><strong>Domain Name</strong></td>
                     <td><strong>Order's Date</strong></td>
                     <td><strong>Next Due Date</strong></td>
@@ -21,6 +22,7 @@
                 <?php foreach ($orders as $order) { ?>
                 <tr>
                     <td>{{ $order->order_id }}</td>
+                    <td>{{ $order->product_name }}</td>
                     <td>{{ $order->domain_name }}</td>
                     <td><?php echo App\Http\Controllers\HelperController::funcDateTimeMysqlToUSA($order->created_at);  ?></td>
                     <td><span class="text-danger"><?php echo App\Http\Controllers\HelperController::funcDateMysqlToUSA($order->next_duedate); ?></span></td>

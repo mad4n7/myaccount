@@ -148,7 +148,7 @@
         </div>              
         <?php } ?>  
         <!-- end total -->
-            
+            <p class="pull-right"><i class="fa fa-power-off" aria-hidden="true"></i> <a href="{{ url('/orders/cancel',$invoice->order_id) }}">Cancel this order</a></p>
           
           </div>
             </div>

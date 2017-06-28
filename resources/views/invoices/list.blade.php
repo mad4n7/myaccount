@@ -11,8 +11,7 @@
           
             <!-- table -->
             <table class="table table-hover">
-                <tr>
-                    <td><strong>ID</strong></td>
+                <tr>                    
                     <td><strong>Order Id</strong></td>
                     <td><strong>Amount</strong></td>
                     <td><strong>Created at</strong></td>                    
@@ -21,7 +20,6 @@
                 </tr>
                 <?php foreach ($invoices as $invoice) { ?>
                 <tr>
-                    <td>{{ $invoice->invoice_id }}</td>
                     <td><a href="{{ url('orders'.'/'.$invoice->order_id)}}">{{ $invoice->order_id }}</a></td>
                     <td><?php echo App\Http\Controllers\HelperController::funcConvertDecimalToCurrency($invoice->amount)  ?></td>
                     <td><?php echo App\Http\Controllers\HelperController::funcDateTimeMysqlToUSA($invoice->created_at);  ?></td>

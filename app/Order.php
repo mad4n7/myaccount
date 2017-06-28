@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+use App\Product;
+
 class Order extends Model
 {
     
@@ -44,6 +46,10 @@ class Order extends Model
                         ->where('orders.user_id', '=', $user_id)                                                        
                         ->get();
           
+                foreach ($result as $r) {
+                    $product = Product::find($r->product_id);
+                    $r->product_name = $product->prod_name;
+                }
      
           return $result;  
           

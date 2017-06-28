@@ -134,4 +134,33 @@ class OrderController extends Controller
     {
         //
     }
+    
+    public function confirmCancel($id)
+    {
+        if( Order::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
+        {
+            Session::flash('msg_error', 'Sorry, the order that you are trying to access does not belong to you.');
+            return redirect('/home');
+        }          
+        $data['user'] = User::find(Auth::user()->id);
+        $data['order'] = Order::where('order_id', $id)->first();
+        $data['page_title'] = 'Order Cancellation';  
+        //return view('home', $data);
+        return view('orders.cancel', $data);   
+    } 
+    public function cancelNow($id)
+    {
+        if( Order::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
+        {
+            Session::flash('msg_error', 'Sorry, the order that you are trying to access does not belong to you.');
+            return redirect('/home');
+        }                  
+        $order = Order::find($id);
+        $order->order_status = 'c';
+        $order->save();
+        $invoice = Invoice::where('order_id', $order->order_id)->first();
+        StripeController::cancelSubscription($invoice->stripe_subscription_id);
+        Session::flash('msg', 'Order ID '.$id.' was cancelled.');
+        return redirect('/home');        
+    }      
 }

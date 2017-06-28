@@ -8,6 +8,7 @@
 <script>
     $(function() {               
         $("#review_extra_migration_details").hide();
+        $("#div_website_package").hide();
         
         /* tooltips */
         var tooltips = $( "[title]" ).tooltip({
@@ -103,12 +104,15 @@
 
                     if(type == 'monthly'){
                         price = data.monthly_price;
-                        plan_renews = "( Renews Monthly )";
+                        plan_renews = "( Renews Monthly )";                                                
+                        $('#ckb_website_package').trigger('click');                                  
+                        $("#div_website_package").hide();
                     }
                     else {
                         price = data.annually_price;
                         plan_renews = "( Renews Annually )";
                         save_percent = ' ( Save 14 % )';
+                        $("#div_website_package").show();
                     }               
                     /* When it will renew) */
                     $("#plan_renews").replaceWith('<div id="plan_renews"  class="text-muted">Plan renews ' + str_date + ' at $ ' + price  + save_percent + '</div>');                                           
@@ -119,14 +123,31 @@
                     /* Review section */        
                     $("#review_product").replaceWith('<div id="review_product" data-price="' + price + '" class="lead">' 
                             + data.product_name  + ' <strong class="pull-right"> $ ' + price +' </strong> ' + plan_renews + ' </div>');                    
-                    sumItens();
+                    sumItems();
                 });
             }); 
         });    
         
+        /**
+        * Real time items
+         */
+
+        $( "#ckb_website_package" ).change(function() {
+            sumItems(); // sum items
+            var checked_input = $(this).is(':checked');
+            /* div review migration */    
+            if(!checked_input){
+                $("#review_extra_wordpress_website").replaceWith('<div id="review_extra_wordpress_website" class="lead"></div>');                            
+            }
+            else {
+                $("#review_extra_wordpress_website").replaceWith('<div id="review_extra_wordpress_website" class="lead">' 
+                        + 'WordPress Website* <strong class="pull-right"> $ 350.00 </strong> </div>');                                            
+            }
+        });          
+        
         $( "#ckb_add_migrate" ).change(function() {
             /* div review migration */      
-            sumItens(); // sum items
+            sumItems(); // sum items
             var checked_input = $(this).is(':checked');
             if(!checked_input){
                 $("#review_extra_migration").replaceWith('<div id="review_extra_migration" class="lead">' 
@@ -142,7 +163,7 @@
         
         /* SSL */
         $( "#ckb_add_ssl" ).change(function() {
-            sumItens(); // sum items
+            sumItems(); // sum items
             var checked_input = $(this).is(':checked');
             /* div review migration */    
             if(!checked_input){
@@ -156,7 +177,7 @@
         
         /* backups */
         $( "#ckb_add_backuppro" ).change(function() {
-            sumItens(); // sum items
+            sumItems(); // sum items
             var checked_input = $(this).is(':checked');
             /* div review migration */    
             if(!checked_input){
@@ -167,6 +188,9 @@
                         + 'Backup Pro (Renews Annually) <strong class="pull-right"> $ 36.00 </strong> </div>');                                            
             }
         });          
+        /**
+        * END of Real Time Items
+         */
         
 
         /* end plan renews */        
@@ -225,7 +249,7 @@
             $("#billing_cycle").append('<option value="monthly" '+
                     ' data-price="' + data.monthly_price + '">Monthly - $'  
                     + data.monthly_price + ' per month </option>');            
-            sumItens(); // sum items
+            sumItems(); // sum items
         });    
     }    
     /* end Cycle */
@@ -233,10 +257,15 @@
 
     
     
-    function sumItens(){
+    function sumItems(){
                 
         var total = 0;    
           
+        if ( $('input[name="ckb_website_package"]').is(':checked') ) {
+            var item_total = $('input[name="ckb_website_package"]').val();
+            total += parseFloat(item_total);    
+            //console.log("migrate");
+        }          
         if ( $('input[name="ckb_add_migrate"]').is(':checked') ) {
             var item_total = $('input[name="ckb_add_migrate"]').val();
             total += parseFloat(item_total);    
@@ -533,7 +562,7 @@
             <!-- section 2 -->
             <div class="col-md-6">
                 <div class="panel panel-success">
-                    <div class="panel-heading lead">Credit Card</div>
+                    <div class="panel-heading lead"><i class="fa fa-lock" aria-hidden="true"></i> Credit Card</div>
                     <div class="panel-body">
                         
                         <div class="row">
@@ -599,11 +628,21 @@
         <div class="panel panel-success">
             <div class="panel-heading lead">Recommended Additional Services</div>
           <div class="panel-body">
-                  
+                <div class="checkbox" id="div_website_package">
+                    <input type="checkbox" id="ckb_website_package" name="ckb_website_package" value="350" onchange="sumItems()" />
+                    <label for="ckb_website_package">
+                        &nbsp; WordPress Website   
+                        <p class="text-muted"> 
+                            $ 350 Wordpress Website*<br />
+                            *Theme customization only. Four (4) page templates maximum. Excludes e-commerce. Must pay annual hosting.
+                        </p>
+                    </label>                    
+                </div>    
+                <br style="clear: both;" />              
                 <div class="checkbox">
-                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="60" onchange="sumItens()" />
+                    <input type="checkbox" id="ckb_add_migrate" name="ckb_add_migrate" value="60" onchange="sumItems()" />
                     <label for="ckb_add_migrate">
-                        &nbsp; Migrate Website(s)   
+                        &nbsp; Migrate Website(s)
                         <p class="text-muted"> 
                             $ 60 up to 3 websites (Billed once)<br />
                             If your domain is currently hosted elsewhere, we can move it to Cat & Mouse Co. for you.
@@ -612,7 +651,7 @@
                 </div>
                 <div id="review_extra_migration_details" class="col-md-9">
                     <div class="form-group">
-                      <label for="comment">Domain names to migrate:</label>
+                      <label for="comment">Website(s) to migrate:</label>
                       <textarea class="form-control" rows="5" 
                                 name="migration_domains"
                                 id="migration_domains"></textarea>
@@ -620,7 +659,7 @@
                 </div>
               <br style="clear: both;" />
                 <div class="checkbox">
-                    <input type="checkbox" id="ckb_add_backuppro" name="ckb_add_backuppro" value="36"  onchange="sumItens()">
+                    <input type="checkbox" id="ckb_add_backuppro" name="ckb_add_backuppro" value="36"  onchange="sumItems()">
                     <label for="ckb_add_backuppro">
                         &nbsp; Backup Pro
                         <p class="text-muted">
@@ -631,7 +670,7 @@
                 </div>              
               
                 <div class="checkbox">
-                    <input type="checkbox" id="ckb_add_ssl" name="ckb_add_ssl" value="24"  onchange="sumItens()">
+                    <input type="checkbox" id="ckb_add_ssl" name="ckb_add_ssl" value="24"  onchange="sumItems()">
                     <label for="ckb_add_ssl">
                         &nbsp; SSL Certificate 
                         <p class="text-muted">$ 24 (Billed Annually)</p>
@@ -649,6 +688,7 @@
                 <tr>
                     <td>
                         <div id="review_product" data-price="0" class="col-md-9"></div>
+                        <div id="review_extra_wordpress_website" class="col-md-9"></div>
                         <div id="review_extra_migration" class="col-md-9"></div>
                         <div id="review_extra_backup" class="col-md-9"></div>
                         <div id="review_extra_ssl" class="col-md-9"></div>

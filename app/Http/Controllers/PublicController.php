@@ -28,10 +28,10 @@ class PublicController extends Controller
         $data['page_title'] = 'Login';
         
         if (Auth::check()) {
-            return view('home', $data);
+            return redirect('/home');
         }        
         else {
-            return view('terms_conditions', $data);
+            return view('auth.login', $data);
         }
     }
     
@@ -203,6 +203,27 @@ class PublicController extends Controller
                 $invoice_1->inv_description = $selected_product->prod_name;
                 $invoice_1->save();
                 
+                
+                //check extra items
+                if(Request::has('ckb_website_package')){
+          
+                    // add subitem
+                    $user_db = User::find(Auth::user()->id);
+                    $description_website_package = 'WordPress Website (4 static pages)';
+                    // Charge it separated
+                    $charge = StripeController::createCharge(35000, 'usd', $user_db->stripe_id, $description_website_package);                    
+                    
+                    $invoice_1 = new Invoice;
+                    $invoice_1->user_id = Auth::user()->id;
+                    $invoice_1->inv_status = 'u';
+                    $invoice_1->stripe_si_id = null;
+                    $invoice_1->plan_id = null;
+                    $invoice_1->amount = Request::input('ckb_website_package');                    
+                    $invoice_1->inv_description = $description_website_package;
+                    $invoice_1->stripe_charger_id = $charge->id;
+                    $invoice_1->save();    
+
+                }             
                 
                 //check extra items
                 if(Request::has('ckb_add_ssl')){
