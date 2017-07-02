@@ -16,17 +16,15 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/flat-admin.css') }}">
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="32x32">
-    
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue.css') }}">
     <!-- jQuery -->
     <script src="{{ asset('js/plugins/jquery.min.js') }}"></script> 
     <script src="{{ asset('js/plugins/jquery-ui.min.js') }}"></script> 
     <script type="text/javascript" src="{{ asset('assets/js/vendor.js') }}"></script>  
     
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/red.css') }}">
-    <!-- Theme 
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue-sky.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue.css') }}">
     
+    <!-- Theme 
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/blue-sky.css') }}">  
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/yellow.css') }}">
     -->
 

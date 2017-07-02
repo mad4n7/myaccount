@@ -48,12 +48,8 @@ Route::group(['middleware' => 'auth'], function()
     Route::resource('orders', 'OrderController');
     Route::get('/orders/server/details/{id}', 'OrderController@showServerDetailsByOrderId'); 
     Route::get('/orders/cancel/{id}', 'OrderController@confirmCancel');
-<<<<<<< HEAD
-    Route::get('/orders/cancel/{id}/now', 'OrderController@cancelNow');     
-=======
     Route::get('/orders/cancel/{id}/now', 'OrderController@cancelNow');
 
->>>>>>> admin
     /* Hosting */
     
     

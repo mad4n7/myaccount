@@ -323,11 +323,11 @@ function deleteCard() {
             <div class="row">
               <div class="col-md-3"></div>
               <div class="col-md-6">
-                <div class="panel panel-success">
+                <div class="panel panel-info">
                     <div class="panel-heading lead">Credit Card</div>
                     <div class="panel-body">
                         <div class="lead">
-                            <strong>Added Credit Cards:</strong>
+                            <strong>Saved Credit Cards:</strong>
                             <table class="table table-hover">
                               <thead>
                                 <tr>
