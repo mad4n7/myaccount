@@ -117,17 +117,8 @@ class HelperController extends Controller
          */        
         static function funcDateTimeMysqlToUSA($date)
         {
-
-            if($date == "" || $date == '0.00' || $date === null)
-            {
-                return null;
-            }
-            else {
-                
-                $date = new DateTime($date);
-                return $date->format('m/d/Y');                
-       
-            }
+            $date_n = new DateTime($date);
+            return $date_n->format('m/d/Y');
         }        
         
 
@@ -164,23 +155,9 @@ class HelperController extends Controller
          * @return string
          */
         static function funcDateMysqlToUSAStr($date)
-        {
-
-            if($date == "" || $date == '0.00' || $date === null)
-            {
-                return null;
-            }
-            else {
-                $dt = explode('-', $date);
-                $date2 = $dt[1].'/'.$dt[2].'/'.$dt[0];
-
-
-                $myDateTime = new DateTime($date2);
-                $new_date = $myDateTime->format("F j, Y");
-
-
-                return $new_date;
-            }
+        {            
+            $date_n = new DateTime($date);
+            return $date_n->format('F j, Y');            
         }
 
 

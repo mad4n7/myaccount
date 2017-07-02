@@ -261,5 +261,12 @@ class StripeController extends Controller
         return $r;
         
     }    
+
+    public static function cancelSubscription($subscription){
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+        $r = \Stripe\Subscription::retrieve($subscription);
+        $r->cancel(array('at_period_end' => true));
+        return $r;        
+    }      
     
 }

@@ -47,18 +47,29 @@ Route::group(['middleware' => 'auth'], function()
 {
     Route::resource('orders', 'OrderController');
     Route::get('/orders/server/details/{id}', 'OrderController@showServerDetailsByOrderId'); 
-    
+    Route::get('/orders/cancel/{id}', 'OrderController@confirmCancel');
+    Route::get('/orders/cancel/{id}/now', 'OrderController@cancelNow');
+
     /* Hosting */
     
     
     Route::get('/profile', 'UserController@showProfile');   
     Route::post('/profile', 'UserController@updateProfile'); 
     Route::post('/profile/password', 'UserController@updateProfilePassword'); 
-    Route::post('/profile/cc_update', 'UserController@updateStripeCreditCard'); 
-    Route::post('/profile/cc_delete', 'UserController@updateStripeCreditCard'); 
+    Route::post('/profile/cc_update', 'UserController@updateStripeCreditCard');
+    Route::post('/profile/cc_delete', 'UserController@updateStripeCreditCard');
     
     Route::get('/invoices', 'InvoiceController@showClientInvoices'); 
     Route::get('/invoices/{id}', 'InvoiceController@showClientInvoiceById'); 
+    Route::get('/invoices/receipt/{id}', 'InvoiceController@showReceipt'); 
     
     Route::get('invoice/paypal/checkout/{id}', 'InvoiceController@clientShowPayPalCheckout');   
+});
+
+Route::group(['middleware' => 'admin'], function()
+{   
+    Route::get('admin/invoices/{status}', 'AdminController@showInvoices'); 
+    Route::get('admin/invoices/receipt/{id}', 'AdminController@showReceipt');
+
+    Route::get('admin/clients', 'AdminController@showClients');   
 });

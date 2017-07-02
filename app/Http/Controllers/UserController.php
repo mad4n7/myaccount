@@ -43,10 +43,12 @@ class UserController extends Controller
     }
     
 
-    public function showProfile()
+    public function showProfile(Request $request)
     {
-        $data['user'] = User::find(Auth::user()->id);
-        $data['user_details'] = User::find(Auth::user()->id)->details;
+        #validade which user to open and permissions
+        $user_id = AdminController::returnAnyUserId($request->query('userid'));
+        $data['user'] = User::find($user_id);
+        $data['user_details'] = User::find($user_id)->details;
         $data['countries'] = Country::all();
         $data['us_states'] = UsState::all();
         
@@ -58,8 +60,7 @@ class UserController extends Controller
     }    
     
     public function updateProfile(Request $request)
-    {
-        
+    {        
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:255',
             'name' => 'required',
@@ -73,13 +74,20 @@ class UserController extends Controller
         }
 
         //update user
-        $user = User::find(Auth::user()->id);
+        # check if is an admin
+        if ($request->session()->has('adm_client_userid')) {
+            $userid = AdminController::returnAnyUserId($request->session()->get('adm_client_userid'));
+        }
+        else {
+            $userid = Auth::user()->id;
+        }        
+        $user = User::where('id', $userid)->first();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->save();
         
         //update user details
-        $user_details = User_detail::where('user_id', Auth::user()->id)->first();
+        $user_details = User_detail::where('user_id', $userid)->first();
         $user_details->phone_number = $request->input('phone_number');
         $user_details->address = $request->input('address');
         $user_details->address2 = $request->input('address2');
@@ -89,9 +97,7 @@ class UserController extends Controller
         $user_details->us_state_code = $request->input('us_state_code');
         $user_details->company = $request->input('company');
         $user_details->save();
-        
-        
-       
+                       
         Session::flash('msg', 'Profile updated.');
         return redirect('/profile');
     }
@@ -109,15 +115,26 @@ class UserController extends Controller
                 return redirect('/profile');
         }
 
-        //update user
-        $user = User::find(Auth::user()->id);
+        # update user
+        # check if is an admin
+        if ($request->session()->has('adm_client_userid')) {
+            $userid = AdminController::returnAnyUserId($request->session()->get('adm_client_userid'));
+            $skip_pass_veri = 1;
+        }
+        else {
+            $userid = Auth::user()->id;
+            $skip_pass_veri = 0;
+        }
+        
+        $user = User::where('id', $userid)->first();
 
-        if (Hash::check($request->input('current_password'), $user->password)) {
+        if (Hash::check($request->input('current_password'), $user->password) 
+            || $skip_pass_veri == 1 ) {
             $user->password = bcrypt($request->input('password'));
             $user->save();
  
             Session::flash('msg', 'Password updated.');
-            return redirect('/profile');            
+            return redirect('/profile');           
         }
         else {
             Session::flash('msg_error', 'Sorry the current password is not correct.');
@@ -127,8 +144,7 @@ class UserController extends Controller
     }    
     
     public function updateStripeCreditCard(Request $request)
-    {
-        
+    {        
 
         $validator = Validator::make($request->all(), [
             'cc_number' => 'required',
@@ -143,10 +159,21 @@ class UserController extends Controller
                 return redirect('/profile');
         }
 
-        $user = User::find(Auth::user()->id);
-        $user_details = User::find(Auth::user()->id)->details;
+        # check if is an admin        
+        if ($request->session()->has('adm_client_userid')) {
+            $userid = AdminController::returnAnyUserId($request->session()->get('adm_client_userid'));
+        }
+        else {
+            $userid = Auth::user()->id;
+        }
+        
+        $user = User::where('id', $userid)->first();
+        if(User_detail::where('user_id', $userid)->count() == 0){
+            Session::flash('msg_error', 'Sorry you first need to complete your profile details.');
+            return redirect('/profile');            
+        }
+        $user_details = User_detail::where('user_id', $userid)->first();
 
-  
         $extra_options = array(
             "address_city" => $user_details->city,
             "address_state" => $user_details->us_state_code,
@@ -162,8 +189,7 @@ class UserController extends Controller
                 $extra_options);
             Session::flash('msg', 'Credit Card added. Thank you.');
             return redirect('/profile');         
-    }      
- 
+    }       
 
     /**
      * Show the form for creating a new resource.

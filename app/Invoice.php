@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+use App\User;
+
 class Invoice extends Model
 {
     
@@ -50,6 +52,22 @@ protected $primaryKey = 'invoice_id';
                         ->where('inv_status', 'u')
                         ->whereNotNull('stripe_subscription_id')
                         ->get();
+    return $r;
+  }  
+  public static function getAllByStatus($status)
+  {
+    if(empty($status)){
+      $status = 'u';
+    }
+    $r = DB::table('invoices')
+                        ->where('inv_status', $status)
+                        ->get();
+             
+    foreach($r as $item){
+      $u = User::where('id', $item->user_id)->first();
+      $item->user = $u;
+    }
+    
     return $r;
   }  
   
