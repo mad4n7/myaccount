@@ -2,15 +2,6 @@
 
 @section('header_tags')
 <script src="{{ asset('js/plugins/jquery.validate.min.js') }}"></script>
-
-
-<script>
-    $(function() {      
-        
-    });    
-    
-    
-</script>
 @endsection
 
 @section('content')

@@ -5,7 +5,13 @@
         <group>
             <file>file:/Applications/MAMP/htdocs/myaccount/app/Http/Controllers/StripeController.php</file>
             <file>file:/Applications/MAMP/htdocs/myaccount/resources/views/hosting/plans.blade.php</file>
+<<<<<<< HEAD
             <file>file:/Applications/MAMP/htdocs/myaccount/app/Http/Controllers/OrderController.php</file>
+=======
+            <file>file:/Applications/MAMP/htdocs/myaccount/database/migrations/2017_06_27_185022_alter_add_chmod_user_table.php</file>
+            <file>file:/Applications/MAMP/htdocs/myaccount/app/Http/Controllers/OrderController.php</file>
+            <file>file:/Applications/MAMP/htdocs/myaccount/.env</file>
+>>>>>>> admin
         </group>
     </open-files>
 </project-private>

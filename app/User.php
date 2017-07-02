@@ -6,6 +6,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Cashier\Billable;
 
+use Illuminate\Support\Facades\DB;
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -38,5 +40,17 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany('App\User_detail', 'user_id');
-    }     
+    }   
+
+    public static function getUsersList()
+    {
+        $r = DB::table('users')
+                    ->leftJoin('user_details', 'users.id', '=', 'user_details.user_id')
+                    ->select('users.id', 'users.name', 'user_details.user_id', 'user_details.company')
+                    ->orderBy('users.id', 'desc')
+                    ->get();
+        $test = $r;                    
+        return $r;
+    }      
+
 }

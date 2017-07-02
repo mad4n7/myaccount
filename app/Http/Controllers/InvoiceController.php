@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 
 
 use App\User;
+use App\User_detail;
 use App\Product;
 use App\Invoice;
 use App\Order;
@@ -22,9 +23,6 @@ class InvoiceController extends Controller
     public function __construct()
     {
             //$this->middleware('auth');
-
-
-
     }    
     
                 
@@ -226,11 +224,28 @@ class InvoiceController extends Controller
             Session::flash('msg_error', 'Sorry, the invoice that you are trying to access does not belong to you.');
             return redirect('/home');
         }        
-        
+                
         $data['invoice'] = Invoice::find($id);
         $data['invoice_itens'] = Invoice::find($id)->invoice_itens;
         $data['page_title'] = 'Invoices';        
         return view('invoices.view', $data);
+    }  
+
+    public function showReceipt($id)
+    {
+        //validate an accesss
+        if( Invoice::checkClientOwner($id, Auth::user()->id) === false || !isset($id) )
+        {
+            Session::flash('msg_error', 'Sorry, the invoice that you are trying to access does not belong to you.');
+            return redirect('/home');
+        }            
+
+        $data['user'] = User::where('id', Auth::user()->id)->first();
+        $data['user_details'] = User_detail::where('user_id', Auth::user()->id)->first();
+        $data['invoice'] = Invoice::where('invoice_id', $id)->first();
+        $data['invoice_created_at'] = HelperController::funcDateMysqlToUSAStr($data['invoice']->created_at);
+        $data['invoice_total'] = HelperController::funcConvertDecimalToCurrency($data['invoice']->amount);
+        return view('emails.invoice_receipt', $data);       
     }    
     
     public function jsonGetPricesByProduct()
@@ -260,7 +275,7 @@ class InvoiceController extends Controller
     }  
     
     /**
-     * Check all invoices that are CHARGES and change to PAID
+     * Check all invoices that have CHARGED and change to PAID
      */
     public function checkAllChargesStatus()
     {
@@ -275,6 +290,7 @@ class InvoiceController extends Controller
                 $invoice_update->inv_status = 'p';
                 $invoice_update->save();
                 echo 'Inv ID:'.$invoice->invoice_id.'<br />';
+                #send email here TODO
             }
         } 
     }
@@ -291,6 +307,7 @@ class InvoiceController extends Controller
                 $invoice_update->paid_date = date('Y-m-d');
                 $invoice_update->inv_status = 'p';
                 $invoice_update->save();
+                #send email here TODO
                 
                 $order_update = Order::find($invoice->order_id);
                 $stripe_period_end = HelperController::fundDateUnixTimeToDateTime( $obj->current_period_end, 'date');

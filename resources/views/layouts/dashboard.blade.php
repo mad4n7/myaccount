@@ -75,7 +75,30 @@
  
   <div class="sidebar-menu">
     <ul class="sidebar-nav">
-        <li <?php if ( Request::is('home') || Request::is('home/*') ){ echo 'class="active"'; } ?> >
+      <?php 
+      if(Auth::user()->chmod == 'rwxrwxrwx'){
+      ?>
+      <li class="dropdown <?php if ( Request::is('admin') || Request::is('admin') 
+            || Request::is('admin/*') ){ echo ' active'; } ?> " >
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <div class="icon">
+            <i class="fa fa-flask" aria-hidden="true"></i>
+          </div>
+          <div class="title">Administration</div>
+        </a>
+        <div class="dropdown-menu">
+          <ul>
+            <li><a href="{{ url('/admin/invoices/unpaid') }}">Invoices</a></li>
+            <li><a href="{{ url('/admin/clients') }}">Clients</a></li>
+            <li class="section"><i class="fa fa-file-o" aria-hidden="true"></i> Configuration</li>
+            <li><a href="{{ url('orders') }}">Products</a></li>                        
+          </ul>
+        </div>        
+      </li> 
+      <?php
+      }
+      ?>      
+      <li <?php if ( Request::is('home') || Request::is('home/*') ){ echo 'class="active"'; } ?> >
         <a href="{{ url('/home') }} ">
           <div class="icon">
             <i class="fa fa-tasks" aria-hidden="true"></i>
