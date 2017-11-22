@@ -46,7 +46,8 @@ class User extends Authenticatable
     {
         $r = DB::table('users')
                     ->leftJoin('user_details', 'users.id', '=', 'user_details.user_id')
-                    ->select('users.id', 'users.name', 'user_details.user_id', 'user_details.company')
+                    ->select('users.id', 'users.name', 'user_details.user_id', 
+                    'user_details.company', 'users.stripe_id')
                     ->orderBy('users.id', 'desc')
                     ->get();
         $test = $r;                    

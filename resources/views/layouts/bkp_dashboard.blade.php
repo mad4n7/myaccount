@@ -23,7 +23,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/yellow.css') }}">
     -->
 
-    <title>{{ $page_title }} {{ config('app.name', 'Cat & Mouse') }}</title>
+    <title>{{ $page_title }} {{ config('app.name', 'Silvaway Solutions') }}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -330,7 +330,7 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="footer-copyright">
-        Copyright © 2017 Cat & Mouse
+        Copyright © 2017 Silvaway Solutions
       </div>
     </div>
   </div>

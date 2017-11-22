@@ -93,7 +93,7 @@
                     <table>
                         <tr>
                             <td class="title">
-                                <img src="{{ asset('images/catmouse-logo.png') }}" style="width: auto; height: 90px;">
+                                <img src="{{ asset('images/logo.png') }}" style="width: auto; height: 90px;">
                             </td>
                             
                             <td>

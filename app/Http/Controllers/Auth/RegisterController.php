@@ -97,7 +97,7 @@ class RegisterController extends Controller
 
         Mail::send('emails.welcome', $data_email, function($message) use ($data_email)
         {
-            $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Cat & Mouse');
+            $message->to($data_email['email'], $data_email['name'])->subject('Welcome to Silvaway Solutions');
         });         
         
         

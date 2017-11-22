@@ -14,7 +14,7 @@
     
     <div class="card">
         <div class="card-header">
-            <p class="lead visible-print-inline">RECEIPT: Cat & Mouse <br /></p>
+            <p class="lead visible-print-inline">RECEIPT: Silvaway Solutions <br /></p>
             <p class="hidden-print">Invoice Number: &nbsp; <strong class="lead">{{ $invoice->invoice_id }}</strong></p>
         </div>
         <div class="card-body">

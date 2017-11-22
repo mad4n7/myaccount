@@ -1,9 +1,9 @@
 <?php
 /**
- * catandmouse.co
+ * arthursilva.com
  *
  * @package  MyAccount
- * @author   Arthur Silva <arthur@catandmouse.co>
+ * @author   Arthur Silva <arthur@arthursilva.com>
  */
 
 
@@ -190,7 +190,7 @@ class UserController extends Controller
             Session::flash('msg', 'Credit Card added. Thank you.');
             return redirect('/profile');         
     }       
-
+    
     /**
      * Show the form for creating a new resource.
      *

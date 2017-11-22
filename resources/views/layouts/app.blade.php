@@ -37,7 +37,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        <a class="navbar-brand" href="{{ url('/') }}"><img src="{{ asset('images/catmouse-logo-type.png') }}" style="height: 90%;" /></a>
+                        <a class="navbar-brand" href="{{ url('/') }}"><img src="{{ asset('images/logo.png') }}" style="height: 100%;" /></a>
                     </a>
                 </div>
 

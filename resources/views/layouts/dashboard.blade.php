@@ -8,7 +8,6 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/custom_fonts.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
     
     
@@ -28,7 +27,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/theme/yellow.css') }}">
     -->
 
-    <title>{{ $page_title }} - {{ config('app.name', 'Cat & Mouse') }}</title>
+    <title>{{ $page_title }} - {{ config('app.name', 'Silvaway Solutions') }}</title>
 
     <!-- Styles -->
     
@@ -64,7 +63,7 @@
 
 <aside class="app-sidebar" id="sidebar">
   <div class="sidebar-header">
-      <a class="sidebar-brand" href="{{ url('/home') }}"><img src="{{ asset('images/catmouse-logo.png') }}" style="width: auto; height: 90px;" /></a>
+      <a class="sidebar-brand" href="{{ url('/home') }}"><img src="{{ asset('images/logo.png') }}" style="width: 76%; height: auto;" /></a>
     <button type="button" class="sidebar-toggle">
       <i class="fa fa-times"></i>
     </button>
@@ -110,7 +109,7 @@
           <div class="icon">
             <i class="fa fa-cube" aria-hidden="true"></i>
           </div>
-          <div class="title">Orders</div>
+          <div class="title">Subscriptions</div>
         </a>
         <div class="dropdown-menu">
           <ul>
@@ -164,7 +163,7 @@
           </button>
         </li>
         <li class="logo">
-          <a class="navbar-brand" href="{{ url('/home') }}"><img src="{{ asset('images/catmouse-logo-type.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
+          <a class="navbar-brand" href="{{ url('/home') }}"><img src="{{ asset('images/logo.png') }}" style="height: 60%;" /> &nbsp;&nbsp;&nbsp; My Account</a>
         </li>
         
       </ul>
@@ -329,7 +328,7 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="footer-copyright">
-        Copyright © 2017 Cat & Mouse. <a href="{{ url('/terms_conditions') }}">Terms & Conditions</a>
+        Copyright © 2017 Silvaway Solutions. <a href="{{ url('/terms_conditions') }}">Terms & Conditions</a>
       </div>
     </div>
   </div>

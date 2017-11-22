@@ -54,6 +54,12 @@ class StripeController extends Controller
         return $r;
         
     }    
+
+    public static function retrieveUpcomingInvoice($stripe_id) {
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+        $r = \Stripe\Invoice::upcoming(array("customer" => $stripe_id));
+        return $r;
+    }
         
     
     /**

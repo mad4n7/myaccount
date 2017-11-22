@@ -41,6 +41,7 @@ Route::get('json/invoices/get_renews_on_by_billing_cycle', 'InvoiceController@js
 /* Robots = this must run every 30 min for example in a CRONJOB */
 Route::get('robot/check_all_charges_status', 'InvoiceController@checkAllChargesStatus');
 Route::get('robot/check_all_subscriptions_status', 'InvoiceController@checkAllSubscriptionsStatus');
+Route::get('robot/check_all_upcoming_invoices', 'InvoiceController@checkUpcomingInvoices');
 
 
 Route::group(['middleware' => 'auth'], function()

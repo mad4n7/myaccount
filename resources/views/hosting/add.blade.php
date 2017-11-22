@@ -645,7 +645,7 @@
                         &nbsp; Migrate Website(s)
                         <p class="text-muted"> 
                             $ 60 up to 3 websites (Billed once)<br />
-                            If your domain is currently hosted elsewhere, we can move it to Cat & Mouse Co. for you.
+                            If your domain is currently hosted elsewhere, we can move it to Silvaway Solutions Co. for you.
                         </p>
                     </label>                    
                 </div>
